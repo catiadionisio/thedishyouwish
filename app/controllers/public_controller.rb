@@ -131,35 +131,58 @@ class PublicController < ApplicationController
         @letter_array = ["a","b","c", "d", "e", "f", "g"]
         @i = 1
 
+        if user_signed_in? 
+            restricoes_ingredientes = Restricao.where(:user_id => current_user.id).map { |x| x.ingrediente_id }
+            
+            receita_array_temp = Receita.all.reject { |u| !(restricoes_ingredientes & u.receita_ingredientes.map { |x| x.ingrediente_id }).empty?}.map{ |obj| obj.id }
+
+            receita_array = Receita.where("receita_id IN (?)", receita_array_temp)
+
+        else
+            receita_array = Receita.all
+        end
+
         @letter_array.each do |letter|
             while @i < 8  do
                 session[letter+@i.to_s] = nil
                 if (@dias.include? letter)
                     if @i == 1
                         if (@refeicoes.include? 'palmoco')
-                            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' })
-                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' })
+                            if !@random_results.blank?
+                                @random_receita = @random_results.first(:offset => rand(@random_results.count))
 
-                            session[letter+@i.to_s] = {receita: @random_receita[:id]}
-                            session[letter+@i.to_s][:pessoas] = session["pa_pessoas"]
+                                session[letter+@i.to_s] = {receita: @random_receita[:id]}
+                                session[letter+@i.to_s][:pessoas] = session["pa_pessoas"]
+                            else
+                                session[:erro_restricoes] = 1
+                            end 
                         end
                     end
                     if @i == 3
                         if (@refeicoes.include? 'almoco')
-                            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
-                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
+                            if !@random_results.blank?
+                                @random_receita = @random_results.first(:offset => rand(@random_results.count))
 
-                            session[letter+@i.to_s] = {receita: @random_receita[:id]}
-                            session[letter+@i.to_s][:pessoas] = session["a_pessoas"]
+                                session[letter+@i.to_s] = {receita: @random_receita[:id]}
+                                session[letter+@i.to_s][:pessoas] = session["a_pessoas"]
+                            else
+                                session[:erro_restricoes] = 1
+                            end 
                         end
                     end
                     if @i == 6
                         if (@refeicoes.include? 'jantar')
-                            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
-                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
+                            if !@random_results.blank?
+                                @random_receita = @random_results.first(:offset => rand(@random_results.count))
 
-                            session[letter+@i.to_s] = {receita: @random_receita[:id]}
-                            session[letter+@i.to_s][:pessoas] = session["j_pessoas"]
+                                session[letter+@i.to_s] = {receita: @random_receita[:id]}
+                                session[letter+@i.to_s][:pessoas] = session["j_pessoas"]
+                            else
+                                session[:erro_restricoes] = 1
+                            end 
                         end
                     end
                 end
@@ -249,21 +272,37 @@ class PublicController < ApplicationController
         celula = params[:celula]
         @letter_array = ["a","b","c", "d", "e", "f", "g"]
 
+        if user_signed_in? 
+            restricoes_ingredientes = Restricao.where(:user_id => current_user.id).map { |x| x.ingrediente_id }
+            
+            receita_array_temp = Receita.all.reject { |u| !(restricoes_ingredientes & u.receita_ingredientes.map { |x| x.ingrediente_id }).empty?}.map{ |obj| obj.id }
+
+            receita_array = Receita.where("receita_id IN (?)", receita_array_temp)
+
+        else
+            receita_array = Receita.all
+        end
+
         if celula == "pa"
             if session["pa_pessoas"] != nil
                 pessoas = session["pa_pessoas"]
             end
             @letter_array.each do |letter|
-                @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' })
-                @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                if !session[letter+1.to_s].blank?
-                    if session[letter+1.to_s][:lock] != "lock"
+                @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' })
+                if !@random_results.blank?
+                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                    if !session[letter+1.to_s].blank?
+                        if session[letter+1.to_s][:lock] != "lock"
+                            session[letter+1.to_s] = {receita: @random_receita[:id]}
+                            session[letter+1.to_s][:pessoas] = pessoas
+                        end
+                    else
                         session[letter+1.to_s] = {receita: @random_receita[:id]}
                         session[letter+1.to_s][:pessoas] = pessoas
                     end
                 else
-                    session[letter+1.to_s] = {receita: @random_receita[:id]}
-                    session[letter+1.to_s][:pessoas] = pessoas
+                    session[letter+1.to_s] = nil
+                    session[:erro_restricoes] = 1
                 end
             end
         elsif celula == "a"
@@ -271,46 +310,61 @@ class PublicController < ApplicationController
                 pessoas = session["a_pessoas"]
             end
             @letter_array.each do |letter|
-                @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
-                @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                if !session[letter+3.to_s].blank?
-                    if session[letter+3.to_s][:lock] != "lock"
+                @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
+                if !@random_results.blank?
+                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                    if !session[letter+3.to_s].blank?
+                        if session[letter+3.to_s][:lock] != "lock"
+                            session[letter+3.to_s] = {receita: @random_receita[:id]}
+                            session[letter+3.to_s][:pessoas] = pessoas
+                        end
+                    else
                         session[letter+3.to_s] = {receita: @random_receita[:id]}
                         session[letter+3.to_s][:pessoas] = pessoas
                     end
                 else
-                    session[letter+3.to_s] = {receita: @random_receita[:id]}
-                    session[letter+3.to_s][:pessoas] = pessoas
+                    session[letter+3.to_s] = nil
+                    session[:erro_restricoes] = 1
                 end
             end
             if session["entradaa"] == "activo"
                 @letter_array.each do |letter|
-                    @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
-                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                    if !session[letter+2.to_s].blank?
-                        if session[letter+2.to_s][:lock] != "lock"
+                    @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
+                    if !@random_results.blank?
+                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                        if !session[letter+2.to_s].blank?
+                            if session[letter+2.to_s][:lock] != "lock"
+                                session[letter+2.to_s] = {receita: @random_receita[:id]}
+                                session[letter+2.to_s][:pessoas] = pessoas
+                            end
+                        else
                             session[letter+2.to_s] = {receita: @random_receita[:id]}
                             session[letter+2.to_s][:pessoas] = pessoas
                         end
                     else
-                        session[letter+2.to_s] = {receita: @random_receita[:id]}
-                        session[letter+2.to_s][:pessoas] = pessoas
+                        session[letter+2.to_s] = nil
+                        session[:erro_restricoes] = 1
                     end
                 end
             end
             
             if session["sobremesaa"] == "activo"
                 @letter_array.each do |letter|
-                    @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
-                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                    if !session[letter+4.to_s].blank?
-                        if session[letter+4.to_s][:lock] != "lock"
+                    @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
+                    if !@random_results.blank?
+                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                        if !session[letter+4.to_s].blank?
+                            if session[letter+4.to_s][:lock] != "lock"
+                                session[letter+4.to_s] = {receita: @random_receita[:id]}
+                                session[letter+4.to_s][:pessoas] = pessoas
+                            end
+                        else
                             session[letter+4.to_s] = {receita: @random_receita[:id]}
                             session[letter+4.to_s][:pessoas] = pessoas
                         end
                     else
-                        session[letter+4.to_s] = {receita: @random_receita[:id]}
-                        session[letter+4.to_s][:pessoas] = pessoas
+                        session[letter+4.to_s] = nil
+                        session[:erro_restricoes] = 1
                     end
                 end
             end
@@ -319,47 +373,62 @@ class PublicController < ApplicationController
                 pessoas = session["j_pessoas"]
             end
             @letter_array.each do |letter|
-                @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
-                @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                if !session[letter+6.to_s].blank?
-                    if session[letter+6.to_s][:lock] != "lock"
+                @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' })
+                if !@random_results.blank?
+                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                    if !session[letter+6.to_s].blank?
+                        if session[letter+6.to_s][:lock] != "lock"
+                            session[letter+6.to_s] = {receita: @random_receita[:id]}
+                            session[letter+6.to_s][:pessoas] = pessoas
+                        end
+                    else
                         session[letter+6.to_s] = {receita: @random_receita[:id]}
                         session[letter+6.to_s][:pessoas] = pessoas
                     end
                 else
-                    session[letter+6.to_s] = {receita: @random_receita[:id]}
-                    session[letter+6.to_s][:pessoas] = pessoas
+                    session[letter+6.to_s] = nil
+                    session[:erro_restricoes] = 1
                 end
             end
 
             if session["entradaj"] == "activo"
                 @letter_array.each do |letter|
-                    @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
-                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                    if !session[letter+5.to_s].blank?
-                        if session[letter+5.to_s][:lock] != "lock"
+                    @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
+                    if !@random_results.blank?
+                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                        if !session[letter+5.to_s].blank?
+                            if session[letter+5.to_s][:lock] != "lock"
+                                session[letter+5.to_s] = {receita: @random_receita[:id]}
+                                session[letter+5.to_s][:pessoas] = pessoas
+                            end
+                        else
                             session[letter+5.to_s] = {receita: @random_receita[:id]}
                             session[letter+5.to_s][:pessoas] = pessoas
                         end
                     else
-                        session[letter+5.to_s] = {receita: @random_receita[:id]}
-                        session[letter+5.to_s][:pessoas] = pessoas
+                        session[letter+5.to_s] = nil
+                        session[:erro_restricoes] = 1
                     end
                 end
             end
 
             if session["sobremesaj"] == "activo"
                 @letter_array.each do |letter|
-                    @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
-                    @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                    if !session[letter+7.to_s].blank?
-                        if session[letter+7.to_s][:lock] != "lock"
+                    @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
+                    if !@random_results.blank?
+                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                        if !session[letter+7.to_s].blank?
+                            if session[letter+7.to_s][:lock] != "lock"
+                                session[letter+7.to_s] = {receita: @random_receita[:id]}
+                                session[letter+7.to_s][:pessoas] = pessoas
+                            end
+                        else
                             session[letter+7.to_s] = {receita: @random_receita[:id]}
                             session[letter+7.to_s][:pessoas] = pessoas
                         end
                     else
-                        session[letter+7.to_s] = {receita: @random_receita[:id]}
-                        session[letter+7.to_s][:pessoas] = pessoas
+                        session[letter+7.to_s] = nil
+                        session[:erro_restricoes] = 1
                     end
                 end
             end
@@ -395,15 +464,20 @@ class PublicController < ApplicationController
                 if session["entradaa"] == "activo"
                     @letter_array.each do |letter|
                         @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
-                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                        if !session[letter+2.to_s].blank?
-                            if session[letter+2.to_s][:lock] != "lock"
+                        if !@random_results.blank?
+                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            if !session[letter+2.to_s].blank?
+                                if session[letter+2.to_s][:lock] != "lock"
+                                    session[letter+2.to_s] = {receita: @random_receita[:id]}
+                                    session[letter+2.to_s][:pessoas] = pessoas
+                                end
+                            else
                                 session[letter+2.to_s] = {receita: @random_receita[:id]}
                                 session[letter+2.to_s][:pessoas] = pessoas
                             end
                         else
-                            session[letter+2.to_s] = {receita: @random_receita[:id]}
-                            session[letter+2.to_s][:pessoas] = pessoas
+                            session[letter+2.to_s] = nil
+                            session[:erro_restricoes] = 1
                         end
                     end
                 end
@@ -415,15 +489,20 @@ class PublicController < ApplicationController
                 if session["sobremesaa"] == "activo"
                     @letter_array.each do |letter|
                         @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
-                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                        if !session[letter+4.to_s].blank?
-                            if session[letter+4.to_s][:lock] != "lock"
+                        if !@random_results.blank?
+                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            if !session[letter+4.to_s].blank?
+                                if session[letter+4.to_s][:lock] != "lock"
+                                    session[letter+4.to_s] = {receita: @random_receita[:id]}
+                                    session[letter+4.to_s][:pessoas] = pessoas
+                                end
+                            else
                                 session[letter+4.to_s] = {receita: @random_receita[:id]}
                                 session[letter+4.to_s][:pessoas] = pessoas
                             end
                         else
-                            session[letter+4.to_s] = {receita: @random_receita[:id]}
-                            session[letter+4.to_s][:pessoas] = pessoas
+                            session[letter+4.to_s] = nil
+                            session[:erro_restricoes] = 1
                         end
                     end
                 end
@@ -435,15 +514,20 @@ class PublicController < ApplicationController
                 if session["entradaj"] == "activo"
                     @letter_array.each do |letter|
                         @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' })
-                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                        if !session[letter+5.to_s].blank?
-                            if session[letter+5.to_s][:lock] != "lock"
+                        if !@random_results.blank?
+                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            if !session[letter+5.to_s].blank?
+                                if session[letter+5.to_s][:lock] != "lock"
+                                    session[letter+5.to_s] = {receita: @random_receita[:id]}
+                                    session[letter+5.to_s][:pessoas] = pessoas
+                                end
+                            else
                                 session[letter+5.to_s] = {receita: @random_receita[:id]}
                                 session[letter+5.to_s][:pessoas] = pessoas
                             end
                         else
-                            session[letter+5.to_s] = {receita: @random_receita[:id]}
-                            session[letter+5.to_s][:pessoas] = pessoas
+                            session[letter+5.to_s] = nil
+                            session[:erro_restricoes] = 1
                         end
                     end
                 end
@@ -455,15 +539,21 @@ class PublicController < ApplicationController
                 if session["sobremesaj"] == "activo"
                     @letter_array.each do |letter|
                         @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' })
-                        @random_receita = @random_results.first(:offset => rand(@random_results.count))
-                        if !session[letter+7.to_s].blank?
-                            if session[letter+7.to_s][:lock] != "lock"
+
+                        if !@random_results.blank?
+                            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+                            if !session[letter+7.to_s].blank?
+                                if session[letter+7.to_s][:lock] != "lock"
+                                    session[letter+7.to_s] = {receita: @random_receita[:id]}
+                                    session[letter+7.to_s][:pessoas] = pessoas
+                                end
+                            else
                                 session[letter+7.to_s] = {receita: @random_receita[:id]}
                                 session[letter+7.to_s][:pessoas] = pessoas
                             end
                         else
-                            session[letter+7.to_s] = {receita: @random_receita[:id]}
-                            session[letter+7.to_s][:pessoas] = pessoas
+                            session[letter+7.to_s] = nil
+                            session[:erro_restricoes] = 1
                         end
                     end
                 end
