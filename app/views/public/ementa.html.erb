@@ -11,8 +11,8 @@
 
 			<% if !session[:erro_restricoes].blank? %>
 				<% session.delete(:erro_restricoes) %>
-				<div id="ementa_salva">
-					Algumas receitas não foram adicionadas devido a restrições.
+				<div class="alert_ementa">
+					Algumas receitas não foram adicionadas devido a restrições!
 				</div>
 			<% end %>
 					
