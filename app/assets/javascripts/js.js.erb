@@ -697,24 +697,37 @@ function add_nova_receita(celula, receitaid) {
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
             console.log(data);
-            var image_path = '<%= image_tag "arrow-option.png", :alt => "editar" %>';
-            var menu_ementa = '<div class="janela-opcoes-container">'+'<%= image_tag "arrow-option-up.png", :alt => "", :class => "arrow-up" %>'+'<div class="janela-opcoes-container2"><div class="janela-opcoes-titulo">Editar</div><div class="janela-opcoes-grupo"><select class="select-ementa select-novo receita-pessoas"><option value="2">2 Pessoas</option><option value="3">3 Pessoas</option><option value="4">4 Pessoas</option><option value="5">5 Pessoas</option><option value="6">6 Pessoas</option><option value="7">7 Pessoas</option><option value="8">8 Pessoas</option></select><div class="janela-opcao"><%= image_tag "lock.png", :alt => "bloquear" %><a class="bloquear" href="javascript:;" data-celula="'+data[0]+'">Bloquear</a></div></div></div></div>';
+            if (data[1] != "sem_receita") {
+                var image_path = '<%= image_tag "arrow-option.png", :alt => "editar" %>';
+                var menu_ementa = '<div class="janela-opcoes-container">'+'<%= image_tag "arrow-option-up.png", :alt => "", :class => "arrow-up" %>'+'<div class="janela-opcoes-container2"><div class="janela-opcoes-titulo">Editar</div><div class="janela-opcoes-grupo"><select class="select-ementa select-novo receita-pessoas"><option value="2">2 Pessoas</option><option value="3">3 Pessoas</option><option value="4">4 Pessoas</option><option value="5">5 Pessoas</option><option value="6">6 Pessoas</option><option value="7">7 Pessoas</option><option value="8">8 Pessoas</option></select><div class="janela-opcao"><%= image_tag "lock.png", :alt => "bloquear" %><a class="bloquear" href="javascript:;" data-celula="'+data[0]+'">Bloquear</a></div></div></div></div>';
 
-            var conteudo = "<div class='nome-div'><span class='tc nome'>"+data[1]+"</span></div><div class='opcoes-receita'><div class='icon-div'><a class='glyphter reload' href='javascript:;' data-celula='"+data[0]+"' data-receitaid='"+data[3]+"'>v</a></div><div class='icon-div'><a class='glyphter delete' href='javascript:;' data-celula='"+data[0]+"'>N</a></div></div><div class='ementa-receita-option'><a href='javascript:;' class='link-receita-option' >" + image_path + "</a></div>";
+                var conteudo = "<div class='nome-div'><span class='tc nome'>"+data[1]+"</span></div><div class='opcoes-receita'><div class='icon-div'><a class='glyphter reload' href='javascript:;' data-celula='"+data[0]+"' data-receitaid='"+data[3]+"'>v</a></div><div class='icon-div'><a class='glyphter delete' href='javascript:;' data-celula='"+data[0]+"'>N</a></div></div><div class='ementa-receita-option'><a href='javascript:;' class='link-receita-option' >" + image_path + "</a></div>";
 
-            if ($(".adicionar_receita").hasClass('empty')) {
-                $(".adicionar_receita").removeClass('empty');
+                if ($(".adicionar_receita").hasClass('empty')) {
+                    $(".adicionar_receita").removeClass('empty');
+                }
+                if ($(".adicionar_receita").hasClass('lock')) {
+                    $(".adicionar_receita").removeClass('lock');
+                }
+                $(".adicionar_receita").html(conteudo);
+                $(".adicionar_receita").children(".ementa-receita-option").append(menu_ementa);
+                $('.select-ementa.select-novo').ementa_select();
+                $(".ementa-receita").removeClass('adicionar_receita');
+                $(".select-novo.receita-pessoas2").children('.s-hidden').val(data[2]);
+                $(".select-novo.receita-pessoas2").children('.styledSelect').text(data[2] + " pessoas");
+                $(".select-ementa.select-novo").removeClass('select-novo');
+            } else {
+                var conteudo = '<span class="tc"><span class="add-receita" data-celula="'+data[0]+'">X</span></span>';
+                $(".adicionar_receita").addClass('empty');
+                $(".adicionar_receita").html(conteudo);
+                $(".ementa-receita").removeClass('adicionar_receita');
+
+                $('#alerta_ementa').html('<div class="alert_ementa">Não existe nenhuma receita disponível!</div>')
+
+                setTimeout(function() {
+                  $(".alert_ementa").fadeOut();
+                }, 2000);
             }
-            if ($(".adicionar_receita").hasClass('lock')) {
-                $(".adicionar_receita").removeClass('lock');
-            }
-            $(".adicionar_receita").html(conteudo);
-            $(".adicionar_receita").children(".ementa-receita-option").append(menu_ementa);
-            $('.select-ementa.select-novo').ementa_select();
-            $(".ementa-receita").removeClass('adicionar_receita');
-            $(".select-novo.receita-pessoas2").children('.s-hidden').val(data[2]);
-            $(".select-novo.receita-pessoas2").children('.styledSelect').text(data[2] + " pessoas");
-            $(".select-ementa.select-novo").removeClass('select-novo');
         },
         error: function (err) {
             console.log("AJAX error in request: " + JSON.stringify(err, null, 2));

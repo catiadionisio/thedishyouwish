@@ -9,12 +9,14 @@
 
 			<% @date = !session["data_ementa"].blank? ? session["data_ementa"].to_date : Date.today %>
 
-			<% if !session[:erro_restricoes].blank? %>
-				<% session.delete(:erro_restricoes) %>
-				<div class="alert_ementa">
-					Algumas receitas não foram adicionadas devido a restrições!
-				</div>
-			<% end %>
+			<div id="alerta_ementa">
+				<% if !session[:erro_restricoes].blank? %>
+					<% session.delete(:erro_restricoes) %>
+					<div class="alert_ementa">
+						Algumas receitas não foram adicionadas devido a restrições!
+					</div>
+				<% end %>
+			</div>		
 					
 			<div class="row mt30 hidden-xs">
 				<div class="col-sm-8 text-left">

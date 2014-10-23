@@ -231,38 +231,56 @@ class PublicController < ApplicationController
         celula = params[:celula]
         receitaid = params[:receitaid].to_i
 
-        if celula[1] == "1"
-            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
-        elsif celula[1] == "2" || celula[1] == "5"
-            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
-        elsif celula[1] == "3" || celula[1] == "6"
-            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
+        if user_signed_in? 
+            restricoes_ingredientes = Restricao.where(:user_id => current_user.id).map { |x| x.ingrediente_id }
+            
+            receita_array_temp = Receita.all.reject { |u| !(restricoes_ingredientes & u.receita_ingredientes.map { |x| x.ingrediente_id }).empty?}.map{ |obj| obj.id }
+
+            receita_array = Receita.where("receita_id IN (?)", receita_array_temp)
+
         else
-            @random_results = Receita.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
+            receita_array = Receita.all
         end
-
-        @random_receita = @random_results.first(:offset => rand(@random_results.count))
-        session[celula] = {receita: @random_receita[:id]}
 
         if celula[1] == "1"
-            if session["pa_pessoas"] != nil
-                session[celula][:pessoas] = session["pa_pessoas"]
-                pessoas = session["pa_pessoas"]
-            end
-        elsif celula[1] == "2" || celula[1] == "3" || celula[1] == "4"
-            if session["a_pessoas"] != nil
-                session[celula][:pessoas] = session["a_pessoas"]
-                pessoas = session["a_pessoas"]
-            end
-        elsif celula[1] == "5" || celula[1] == "6" || celula[1] == "7"
-            if session["j_pessoas"] != nil
-                session[celula][:pessoas] = session["j_pessoas"]
-                pessoas = session["j_pessoas"]
-            end
+            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '4' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
+        elsif celula[1] == "2" || celula[1] == "5"
+            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '1' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
+        elsif celula[1] == "3" || celula[1] == "6"
+            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '3' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
+        else
+            @random_results = receita_array.includes(:receita_tiporefeicaos).where(receita_tiporefeicaos: { tiporefeicao_id: '2' }).where.not(receita_tiporefeicaos: { receita_id: receitaid })
         end
 
+        if !@random_results.blank?
+            @random_receita = @random_results.first(:offset => rand(@random_results.count))
+            session[celula] = {receita: @random_receita[:id]}
 
-        render :json => [celula, @random_receita[:nome], pessoas, @random_receita[:id]]
+            if celula[1] == "1"
+                if session["pa_pessoas"] != nil
+                    session[celula][:pessoas] = session["pa_pessoas"]
+                    pessoas = session["pa_pessoas"]
+                end
+            elsif celula[1] == "2" || celula[1] == "3" || celula[1] == "4"
+                if session["a_pessoas"] != nil
+                    session[celula][:pessoas] = session["a_pessoas"]
+                    pessoas = session["a_pessoas"]
+                end
+            elsif celula[1] == "5" || celula[1] == "6" || celula[1] == "7"
+                if session["j_pessoas"] != nil
+                    session[celula][:pessoas] = session["j_pessoas"]
+                    pessoas = session["j_pessoas"]
+                end
+            end
+
+            render :json => [celula, @random_receita[:nome], pessoas, @random_receita[:id]]
+        else
+            session[celula] = nil
+            
+            render :json => [celula, "sem_receita"]
+        end 
+
+        
     end
 
     def add_ementa_refeicao
