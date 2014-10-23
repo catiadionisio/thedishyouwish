@@ -1,0 +1,268 @@
+<div id="wrap">
+	<div class="conteudo-pagina perfil">
+		<div class="top-perfil">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="foto-perfil">
+							<% if (current_user.photo.exists?) %>
+								<%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+							<% else %>
+								<% if (current_user.provider == "facebook") %>
+									<%= image_tag current_user.mediumFacebookImage, :alt => 'Foto', :class => 'img-responsive' %>
+								<% else %>
+									<%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+								<% end %>
+							<% end %>
+						</div>
+						<div class="info-perfil">
+                            <div class="nome-perfil">
+                                <%= link_to current_user.nome, perfil_path %>
+                            </div>
+                            <div class="email-perfil">
+                                <%= current_user.email %>
+                            </div>
+                            <div class="dados-perfil">
+                                <% if (!current_user.sexo.empty?) %>
+                                    <div class="dados">                            
+                                        <%= image_tag current_user.sexo+'.png', :alt => current_user.sexo %>
+                                        <%= current_user.sexo.capitalize %>
+                                    </div>
+                                <% end %>
+                                <% if (!current_user.datanasc.blank?) %> 
+                                    <div class="dados ml">   
+                                        <%= image_tag 'age.png', :alt => 'idade' %>                     
+                                        <%= current_user.age(current_user.datanasc) %> anos
+                                    </div>
+                                <% end %>
+                                <div class="dados ml">
+                                    <%= image_tag 'edit.png', :alt => 'editar' %>
+                                    <%= link_to "Editar perfil", edit_user_registration_path %>
+                                </div>
+                            </div>
+                            <div class="guardados-perfil">
+                                <%= link_to("Receitas favoritas (#{@receitas.length})", receitas_favoritas_path, { :class => "button" }) %>
+                                <%= link_to("Ementas guardadas (#{@ementas.length})", ementas_guardadas_path, { :class => "button" }) %>
+                                <%= link_to("Restrições (#{@restricoes.length})", restricoes_path, { :class => "button" }) %>
+                            </div>
+                        </div>
+					</div>
+				</div>			
+			</div>		
+		</div>
+		<div class="bottom-perfil">
+			<% if @actividade_grupo_dias.length != 0 %>
+
+			<div class="title-perfil-container">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="title-perfil">Actividade diária</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container container-sm-height">
+				<% @actividade_grupo_dias.keys.sort.reverse.each do |dia| %>
+					<div class="row row-sm-height linha">
+						<div class="col-sm-3 col-md-2 col-sm-height">
+							<% if (dia.to_date == Date.today.to_date) %>
+								<div class="dia-proximo">Hoje</div>
+							<% elsif (dia.to_date == Date.today.advance(:days => -1).to_date) %>
+								<div class="dia-proximo">Ontem</div>
+							<% else %>
+								<div class="dia-proximo">
+									<div class="dia-numero"><%= dia.to_date.day %></div>
+									<div class="dia-semana"><%= l(dia.to_date, format: :day_format) %></div>
+								</div>
+							<% end %>
+						</div>
+						<div class="col-sm-9 col-md-10 col-sm-height lista-actividade">
+							<ul>
+								<% grupo_actividades = @actividade_grupo_dias[dia].group_by { |t| t.tipo } %>
+								<% grupo_actividades.each do |tipo, tipo_actividades| %>
+									<% accao_actividades_grupo = tipo_actividades.group_by { |t| t.accao } %>
+									<% accao_actividades_grupo.each do |accao, accao_actividades| %>
+										<% if accao == "add" %>
+											<% accao_nome = "adicionada" %>
+										<% elsif accao == "remove" %>
+											<% accao_nome = "removida" %>
+										<% elsif accao == "update" %>
+											<% accao_nome = "actualizada" %>
+										<% else %>
+											<% accao_nome = accao %>
+										<% end %>
+										
+										<% actividades_id = [] %>
+										<% accao_actividades.each do |aa| %>
+											<% unless actividades_id.include?(aa.tipoid) %>
+												<% actividades_id.push(aa.tipoid) %>
+											<% end %>
+										<% end %>
+
+										<li>
+											<% if tipo == "ementa" %>
+												<% if accao == "remove" %>
+													<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+												<% else %>
+													<%= link_to "ementas_guardadas?id=#{actividades_id.join(",")}" do %>
+											    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+											    	<% end %>
+										    	<% end %>
+									    	<% end %>
+											<% if tipo == "receita" %>
+												<%= link_to "receitas_actividade?id=#{actividades_id.join(",")}" do %>
+										    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+										    	<% end %>
+									    	<% end %>
+									    </li>
+									<% end %>
+								<% end %>
+							</ul>
+						</div>
+					</div>
+				<% end %>
+			</div>
+			<% end %>
+
+			<% if @actividade_grupo_mes.length != 0 %>
+
+			<div class="title-perfil-container">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="title-perfil">Actividade mensal</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="container container-sm-height">
+				<% @actividade_grupo_mes.keys.sort.reverse.each do |mes| %>
+					<div class="row row-sm-height linha">
+						<div class="col-sm-3 col-md-2 col-sm-height">
+							<%= link_to perfil_mes_path(:mes => mes.to_date) do %>
+								<div class="dia-proximo">
+									<div class="mes"><%= l(mes.to_date, format: :month_format) %></div>
+									<div class="ano"><%= mes.to_date.year %></div>
+								</div>
+							<% end %>
+						</div>
+						<div class="col-sm-9 col-md-10 col-sm-height lista-actividade">
+							<ul>
+								<% grupo_actividades = @actividade_grupo_mes[mes].group_by { |t| t.tipo } %>
+								<% grupo_actividades.each do |tipo, tipo_actividades| %>
+									<% accao_actividades_grupo = tipo_actividades.group_by { |t| t.accao } %>
+									<% accao_actividades_grupo.each do |accao, accao_actividades| %>
+										<% if accao == "add" %>
+											<% accao_nome = "adicionada" %>
+										<% elsif accao == "remove" %>
+											<% accao_nome = "removida" %>
+										<% elsif accao == "update" %>
+											<% accao_nome = "actualizada" %>
+										<% else %>
+											<% accao_nome = accao %>
+										<% end %>
+										
+										<% actividades_id = [] %>
+										<% accao_actividades.each do |aa| %>
+											<% unless actividades_id.include?(aa.tipoid) %>
+												<% actividades_id.push(aa.tipoid) %>
+											<% end %>
+										<% end %>
+
+										<li>
+											<% if tipo == "ementa" %>
+												<% if accao == "remove" %>
+													<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+												<% else %>
+													<%= link_to "ementas_guardadas?id=#{actividades_id.join(",")}" do %>
+											    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+											    	<% end %>
+										    	<% end %>
+									    	<% end %>
+											<% if tipo == "receita" %>
+												<%= link_to "receitas_actividade?id=#{actividades_id.join(",")}" do %>
+										    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+										    	<% end %>
+									    	<% end %>
+									    </li>
+									<% end %>
+								<% end %>
+							</ul>
+						</div>
+					</div>
+				<% end %>
+			</div>
+			<% end %>
+
+			<% if @actividade_grupo_ano.length != 0 %>
+
+			<div class="title-perfil-container">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="title-perfil">Actividade anual</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="container container-sm-height">
+				<% @actividade_grupo_ano.keys.sort.reverse.each do |ano| %>
+					<div class="row row-sm-height linha">
+						<div class="col-sm-3 col-md-2 col-sm-height">
+							<%= link_to perfil_ano_path(:ano => ano.to_date) do %>
+								<div class="dia-proximo"><%= ano.to_date.year %></div>
+							<% end %>
+						</div>
+						<div class="col-sm-9 col-md-10 col-sm-height lista-actividade">
+							<ul>
+								<% grupo_actividades = @actividade_grupo_ano[ano].group_by { |t| t.tipo } %>
+								<% grupo_actividades.each do |tipo, tipo_actividades| %>
+									<% accao_actividades_grupo = tipo_actividades.group_by { |t| t.accao } %>
+									<% accao_actividades_grupo.each do |accao, accao_actividades| %>
+										<% if accao == "add" %>
+											<% accao_nome = "adicionada" %>
+										<% elsif accao == "remove" %>
+											<% accao_nome = "removida" %>
+										<% elsif accao == "update" %>
+											<% accao_nome = "actualizada" %>
+										<% else %>
+											<% accao_nome = accao %>
+										<% end %>
+										
+										<% actividades_id = [] %>
+										<% accao_actividades.each do |aa| %>
+											<% unless actividades_id.include?(aa.tipoid) %>
+												<% actividades_id.push(aa.tipoid) %>
+											<% end %>
+										<% end %>
+
+										<li>
+											<% if tipo == "ementa" %>
+												<% if accao == "remove" %>
+													<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+												<% else %>
+													<%= link_to "ementas_guardadas?id=#{actividades_id.join(",")}" do %>
+											    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+											    	<% end %>
+										    	<% end %>
+									    	<% end %>
+											<% if tipo == "receita" %>
+												<%= link_to "receitas_actividade?id=#{actividades_id.join(",")}" do %>
+										    		<%= actividades_id.length %> <%= (actividades_id.length == 1) ? tipo : tipo + "s" %>  <%= (actividades_id.length == 1) ? accao_nome : accao_nome + "s" %>
+										    	<% end %>
+									    	<% end %>
+									    </li>
+									<% end %>
+								<% end %>
+							</ul>
+						</div>
+					</div>
+				<% end %>
+			</div>
+
+			<% end %>
+		</div>
+	</div>
+</div>

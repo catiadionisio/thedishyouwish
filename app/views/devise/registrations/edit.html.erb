@@ -1,0 +1,150 @@
+<div id="wrap">
+    <div class="conteudo-pagina perfil">
+        <div class="top-perfil">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="foto-perfil">
+                  <% if (current_user.photo.exists?) %>
+                    <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                  <% else %>
+                    <% if (current_user.provider == "facebook") %>
+                      <%= image_tag current_user.mediumFacebookImage, :alt => 'Foto', :class => 'img-responsive' %>
+                    <% else %>
+                      <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                    <% end %>
+                  <% end %>
+                </div>
+                <div class="info-perfil">
+                  <div class="nome-perfil">
+                    <%= link_to current_user.nome, perfil_path %>
+                  </div>
+                  <div class="email-perfil">
+                    <%= current_user.email %>
+                  </div>
+                  <div class="dados-perfil">
+                    <div class="dados">
+                      <% if (!current_user.sexo.empty?) %>              
+                        <%= image_tag current_user.sexo+'.png', :alt => current_user.sexo %>
+                        <%= current_user.sexo.capitalize %>
+                      <% end %>
+                    </div>
+                    <div class="dados ml">
+                      <% if (!current_user.datanasc.blank?) %>  
+                        <%= image_tag 'age.png', :alt => 'idade' %>           
+                        <%= current_user.age(current_user.datanasc) %> anos
+                      <% end %>
+                    </div>
+                    <div class="dados ml">
+                      <%= image_tag 'edit.png', :alt => 'editar' %>
+                      <%= link_to "Editar perfil", edit_user_registration_path %>
+                    </div>
+                  </div>
+                  <div class="guardados-perfil">
+                    <%= link_to("Receitas favoritas (#{@receitas.length})", receitas_favoritas_path, { :class => "button" }) %>
+                    <%= link_to("Ementas guardadas (#{@ementas.length})", ementas_guardadas_path, { :class => "button" }) %>
+                    <%= link_to("Restrições (#{@restricoes.length})", restricoes_path, { :class => "button" }) %>
+                  </div>
+                </div>
+              </div>
+            </div>      
+          </div>    
+        </div>
+        <div class="bottom-perfil">
+            <div class="title-perfil-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title-perfil">Editar perfil</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt30">
+              <div class="row login">
+                <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: :true }) do |f| %>
+                  <%= devise_error_messages! %>
+
+                  <div class="col-md-4 col-md-offset-4">
+                    <%= f.label "Nome:" %> <br>
+                    <%= f.text_field :nome %>
+                  </div>
+
+                  <div class="col-md-4 col-md-offset-4">
+                    <%= f.label "Sexo:" %> <br>
+                    <span class="sexo">
+                      <%= f.radio_button :sexo, 'masculino', :checked => true %> 
+                      <%= label :sexo_masculino, 'Masculino' %>
+                      <%= f.radio_button :sexo, 'feminino' %>
+                      <%= label :sexo_feminino, 'Feminino' %>
+                    </span>
+                  </div>
+
+                  <div class="col-md-4 col-md-offset-4">
+                    <%= f.label "Data de nascimento:" %> <br>
+                    <div data-date-format="dd-mm-yyyy" class="input-append date myDatepicker">
+                        <%= f.text_field :datanasc, :class => 'datepicker span2' %>
+                        <span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 col-md-offset-4">
+                    <%= f.label "Imagem:" %> <br>
+                    <%= f.file_field :photo %>
+                    
+                    <% if current_user.photo.exists? %>
+                      <%= image_tag current_user.photo.url(:thumb) %><br/>
+                      <%= f.check_box :remove_photo %> Eliminar imagem
+                    <% end %>
+                  </div>
+
+                  <% if (current_user.provider != "facebook") %>
+                      <div class="col-md-4 col-md-offset-4">
+                        <%= f.label "Email:" %> <br>
+                        <%= f.email_field :email %>
+                      </div>
+
+                      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+                        <div>Aguardado confirmação para: <%= resource.unconfirmed_email %></div>
+                      <% end %>
+
+                      <div class="col-md-4 col-md-offset-4">
+                        <%= f.label "Password:" %>
+                        <%= f.password_field :password, autocomplete: "off" %>
+                        <div class="login-editar-nota">(deixa em branco caso não a queiras mudar)</div>
+                      </div>
+
+                      <div class="col-md-4 col-md-offset-4">
+                        <%= f.label "Confirmar password:" %>
+                        <%= f.password_field :password_confirmation, autocomplete: "off" %>
+                      </div>
+
+                      <div class="col-md-4 col-md-offset-4">
+                        <%= f.label "Password actual:" %>
+                        <%= f.password_field :current_password, autocomplete: "off" %>
+                        <div class="login-editar-nota">(Insere a tua password actual caso a queiras alterar)</div>
+                      </div>
+                  <% else %>
+                      <%= f.hidden_field :email %>
+                  <% end %>
+
+                  <div class="col-md-4 col-md-offset-4 mt10">
+                    <%= f.submit "Actualizar" %>
+                  </div>
+
+                <% end %>
+
+              </div>
+
+              <div class="row">
+                <div class="col-xs-12 mt10">
+                  <div class="cancelar-conta">
+                    <%= button_to "Cancelar conta", registration_path(resource_name), data: { confirm: "Tens a certeza que desejas cancelar a tua conta?" }, method: :delete %>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>

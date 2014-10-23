@@ -1,0 +1,1120 @@
+/*jslint browser: true*/
+/*global $, jQuery, Fraction, alert*/
+
+// FUNÇÕES -------------------------------------------------------
+
+// VERIFICA SE É NUMERO
+
+function isNumber(n) {
+    "use strict";
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+// DROPDOWNS HOME
+
+function countHome() {
+    "use strict";
+    var ndias,
+        nrefeicoes,
+        npessoas;
+    ndias = $('.dias-home:checked').size();
+    if (ndias === 1) {
+        $('.n-dias-home').text(ndias + " dia");
+    } else {
+        $('.n-dias-home').text(ndias + " dias");
+    }
+
+    nrefeicoes = $('.refeicoes-home:checked').size();
+    if (nrefeicoes === 1) {
+        $('.n-refeicoes-home').text(nrefeicoes + " refeição");
+    } else {
+        $('.n-refeicoes-home').text(nrefeicoes + " refeições");
+    }
+
+    npessoas = $('.pessoas-home:checked').val();
+    $('.n-pessoas-home').text(npessoas + " pessoas");
+}
+
+var today_date = new Date();
+
+// DATEPICKER
+$('.datepicker').datepicker({
+    format: 'yyyy/mm/dd',
+    startDate: '1914-01-01',
+    endDate: String(today_date),
+    startView: "decade",
+    autoclose: true
+});
+
+// RESIZE DA JANELA -------------------------------------------------------
+
+$(window).resize(function () {
+    "use strict";
+
+    // Home
+
+    if ($(window).width() < 767) {
+        $('.logo img').css({
+            "max-width" : 280,
+            "height" : "auto",
+            "width" : "95%"
+        });
+
+
+    } else if ($(window).height() > 560) {
+
+        $('.logo img').css({
+            "height" : ($(window).height()) / 2.5,
+            "width" : "auto"
+        });
+
+    } else {
+        $('.logo img').css({
+            "height" : 470 / 2.5,
+            "width" : "auto"
+        });
+    }
+
+});
+
+// Agora basta inicializar a função: 
+$(window).resize();
+
+
+// CHECKBOX QUADRADOS -------------------------------------------------------
+
+$('input').ezMark();
+
+
+// SELECTS -------------------------------------------------------
+
+$.fn.ementa_select = function(options) {
+    return this.each(function() {
+        var numberOfOptions,
+            idSelect,
+            styledSelect,
+            list,
+            i,
+            listItems;
+
+        // Cache the number of options
+        numberOfOptions = $(this).children('option').length;
+
+        // Get the ID
+        idSelect = $(this).attr('id');
+        classSelect = $(this).attr('class');
+
+        // Hides the select element
+        $(this).addClass('s-hidden');
+
+        // Wrap the select element in a div
+        if (idSelect && classSelect) {
+            $(this).wrap('<div class="select ' + classSelect + '2"' + ' id="' + idSelect + '2"></div>');
+        } else if (idSelect && !classSelect) {
+            $(this).wrap('<div class="select"' + ' id="' + idSelect + '2"></div>');
+        } else if (!idSelect && classSelect) {
+            $(this).wrap('<div class="select ' + classSelect + '2"></div>');
+        } else {
+            $(this).wrap('<div class="select"></div>');
+        }
+
+        // Insert a styled div to sit over the top of the hidden select element
+        $(this).after('<div class="styledSelect"></div>');
+
+        // Cache the styled div
+        styledSelect = $(this).next('div.styledSelect');
+
+        // Show the selected option in the styled div
+        styledSelect.text($(this).val() + ' pessoas');
+
+        // Insert an unordered list after the styled div and also cache the list
+        list = $('<ul />', {
+            'class': 'options'
+        }).insertAfter(styledSelect);
+
+        // Insert a list item into the unordered list for each select option
+        for (i = 0; i < numberOfOptions; i += 1) {
+            $('<li />', {
+                text: $(this).children('option').eq(i).text(),
+                rel: $(this).children('option').eq(i).val()
+            }).appendTo(list);
+        }
+
+        // Cache the list items
+        listItems = list.children('li');
+
+        // Show the unordered list when the styled div is clicked (also hides it if the div is clicked again)
+        styledSelect.click(function (e) {
+            e.stopPropagation();
+            if ($(this).hasClass('active')) {
+                $(this).removeClass('active').next('ul.options').hide();
+            } else {
+                $(this).toggleClass('active').next('ul.options').toggle();
+            }
+        });
+
+        // Hides the unordered list when a list item is clicked and updates the styled div to show the selected list item
+        // Updates the select element to have the value of the equivalent option
+        listItems.click(function (e) {
+            styledSelect.text($(this).text()).removeClass('active');
+            $(this).val($(this).attr('rel'));
+            $(this).parent().siblings('.s-hidden').val($(this).attr('rel'));
+            list.hide();
+        });
+
+        // Hides the unordered list when clicking outside of it
+        $(document).click(function () {
+            styledSelect.removeClass('active');
+            list.hide();
+        });
+
+    });
+};
+
+$('.select-ementa').ementa_select();
+
+
+// HOME -------------------------------------------------------
+
+// OPÇÕES DO UTILIZADOR
+
+$(".user-options").click(function () {
+    "use strict";
+    var offset;
+
+    if ($(".janela-gerir-conta").is(':visible')) {
+        $(".janela-gerir-conta").fadeOut('fast');
+    } else {
+        offset = $(".user-options").offset();
+
+        $('.janela-gerir-conta').css({
+            "top": offset.top + 35,
+            "left": offset.left - ($('.janela-gerir-conta').outerWidth()/2) + ($('.user-options').outerWidth()/2)
+        });
+        $(".janela-gerir-conta").fadeIn('fast');
+    }
+});
+
+// DROPDOWNS
+
+countHome();
+
+$('.button-dropdown-home').click(function () {
+    "use strict";
+    if ($(this).siblings('.dropdown-home').is(':visible')) {
+        $(this).siblings('.dropdown-home').fadeOut('400');
+    } else if ($('.dropdown-home').is(':visible')) {
+        $('.dropdown-home').fadeOut('400');
+        $(this).siblings('.dropdown-home').fadeIn('400');
+    } else {
+        $(this).siblings('.dropdown-home').fadeIn('400');
+    }
+
+});
+
+$('.checkbox-home').click(function () {
+    "use strict";
+    countHome();
+
+});
+
+
+// RECEITA -------------------------------------------------------
+
+// HOVER DO MODO DE CONFECÇÃO
+
+$('.confeccao li').hover(
+    function () {
+        "use strict";
+        $(this).addClass('confeccao-active');
+    },
+    function () {
+        "use strict";
+        $(this).removeClass('confeccao-active');
+    }
+);
+
+
+// INGREDIENTES/ NÚMERO DE PESSOAS NA RECEITA
+
+var listaIngredientes = [],
+    f,
+    i;
+
+$(".ingredientes li .quantidade").each(function () {
+    "use strict";
+    listaIngredientes.push($(this).text());
+});
+
+function changePessoas(x) {
+    "use strict";
+    var i,
+        ingredientesActualizado = [];
+
+    for (i = 0; i < listaIngredientes.length; i += 1) {
+        if (isNumber(listaIngredientes[i])) {
+            ingredientesActualizado[i] = (listaIngredientes[i] * x) / 2;
+
+            if (!ingredientesActualizado[i].isFinite) {
+                console.log (ingredientesActualizado[i]);
+
+                var roundNumber = Math.round( ingredientesActualizado[i] * 10 ) / 10;
+                console.log (roundNumber);
+
+                f = new Fraction(roundNumber);
+            }
+
+            else {
+                f = new Fraction(ingredientesActualizado[i]);
+            }
+
+            document.getElementsByClassName('quantidade')[i].innerHTML = f;
+        } else {
+            ingredientesActualizado[i] = (parseFloat(listaIngredientes[i]) * x) / 2;
+
+            document.getElementsByClassName('quantidade')[i].innerHTML = parseInt(ingredientesActualizado[i], 10);
+        }
+    }
+}
+
+$(document).ready(function () {
+    "use strict";
+    changePessoas($('.select-receita-ingredientes').attr('id'));
+});
+
+$('#changeNpessoas2 .options li').click(function () {
+    "use strict";
+    var pessoas = $(this).val();
+    changePessoas(pessoas);
+
+    var id = $(this).closest('.select-receita-pessoas').attr('id');
+
+    $.ajax({
+        url: "/receita_pessoas/",
+        data: "id="+id+"&pessoas="+pessoas,
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            $('.select-receita-pessoas').children('.select-ementa2').children('.s-hidden').val(data[1]);
+        },
+        error: function (err) {
+            console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+        }
+    });
+});
+
+
+$( document ).on( 'mouseenter', '.icon-div', function () {
+    $('.label-icon').hide();
+    $(this).children('.label-icon').show();
+});
+
+$( document ).on( 'mouseleave', '.icon-div', function () {
+    $(this).children('.label-icon').hide();
+});
+
+$( document ).on( 'mouseenter', '.rating-vote', function () {
+    "use strict";
+    if ($(this).hasClass('rating1')) {
+        $(this).addClass("hover-rating");
+        $(this).text("V");
+
+        $(this).siblings('.rating5').text("q");
+        $(this).siblings('.rating4').text("q");
+        $(this).siblings('.rating3').text("q");
+        $(this).siblings('.rating2').text("q");
+    }
+    if ($(this).hasClass('rating2')) {
+        $(this).addClass("hover-rating");
+        $(this).text("V");
+        $(this).siblings('.rating1').addClass("hover-rating");
+        $(this).siblings('.rating1').text("V");
+
+        $(this).siblings('.rating5').text("q");
+        $(this).siblings('.rating4').text("q");
+        $(this).siblings('.rating3').text("q");
+    }
+    if ($(this).hasClass('rating3')) {
+        $(this).addClass("hover-rating");
+        $(this).text("V");
+        $(this).siblings('.rating2').addClass("hover-rating");
+        $(this).siblings('.rating2').text("V");
+        $(this).siblings('.rating1').addClass("hover-rating");
+        $(this).siblings('.rating1').text("V");
+
+        $(this).siblings('.rating5').text("q");
+        $(this).siblings('.rating4').text("q");
+    }
+    if ($(this).hasClass('rating4')) {
+        $(this).addClass("hover-rating");
+        $(this).text("V");
+        $(this).siblings('.rating3').addClass("hover-rating");
+        $(this).siblings('.rating3').text("V");
+        $(this).siblings('.rating2').addClass("hover-rating");
+        $(this).siblings('.rating2').text("V");
+        $(this).siblings('.rating1').addClass("hover-rating");
+        $(this).siblings('.rating1').text("V");
+
+        $(this).siblings('.rating5').text("q");
+    }
+    if ($(this).hasClass('rating5')) {
+        $(this).addClass("hover-rating");
+        $(this).text("V");
+        $(this).siblings('.rating4').addClass("hover-rating");
+        $(this).siblings('.rating4').text("V");
+        $(this).siblings('.rating3').addClass("hover-rating");
+        $(this).siblings('.rating3').text("V");
+        $(this).siblings('.rating2').addClass("hover-rating");
+        $(this).siblings('.rating2').text("V");
+        $(this).siblings('.rating1').addClass("hover-rating");
+        $(this).siblings('.rating1').text("V");
+    }
+});
+
+
+$( document ).on( 'mouseleave', '.rating-vote', function () {
+    "use strict";
+    $(".rating-vote").removeClass("hover-rating");
+
+    if ($(".rating-receita .glyphter").hasClass('0-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("q");
+        $(this).parent('.glyphter').children('.rating2').text("q");
+        $(this).parent('.glyphter').children('.rating3').text("q");
+        $(this).parent('.glyphter').children('.rating4').text("q");
+        $(this).parent('.glyphter').children('.rating5').text("q");
+    }
+    if ($(".rating-receita .glyphter").hasClass('1-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("V");
+        $(this).parent('.glyphter').children('.rating2').text("q");
+        $(this).parent('.glyphter').children('.rating3').text("q");
+        $(this).parent('.glyphter').children('.rating4').text("q");
+        $(this).parent('.glyphter').children('.rating5').text("q");
+    }
+    if ($(".rating-receita .glyphter").hasClass('2-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("V");
+        $(this).parent('.glyphter').children('.rating2').text("V");
+        $(this).parent('.glyphter').children('.rating3').text("q");
+        $(this).parent('.glyphter').children('.rating4').text("q");
+        $(this).parent('.glyphter').children('.rating5').text("q");
+    }
+    if ($(".rating-receita .glyphter").hasClass('3-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("V");
+        $(this).parent('.glyphter').children('.rating2').text("V");
+        $(this).parent('.glyphter').children('.rating3').text("V");
+        $(this).parent('.glyphter').children('.rating4').text("q");
+        $(this).parent('.glyphter').children('.rating5').text("q");
+    }
+    if ($(".rating-receita .glyphter").hasClass('4-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("V");
+        $(this).parent('.glyphter').children('.rating2').text("V");
+        $(this).parent('.glyphter').children('.rating3').text("V");
+        $(this).parent('.glyphter').children('.rating4').text("V");
+        $(this).parent('.glyphter').children('.rating5').text("q");
+    }
+    if ($(".rating-receita .glyphter").hasClass('5-star')) {
+        $(this).parent('.glyphter').children('.rating1').text("V");
+        $(this).parent('.glyphter').children('.rating2').text("V");
+        $(this).parent('.glyphter').children('.rating3').text("V");
+        $(this).parent('.glyphter').children('.rating4').text("V");
+        $(this).parent('.glyphter').children('.rating5').text("V");
+    }
+});
+
+$(".rating-vote").click(function() {
+    var receitaid = $(this).parent('.glyphter').data("receitaid");
+    var userlogin = $(this).parent('.glyphter').data("userlogin");
+    console.log(receitaid);
+
+    var valor;
+
+    if ($(this).hasClass('rating1')) {
+        valor = 1;
+    }
+    if ($(this).hasClass('rating2')) {
+        valor = 2;
+    }
+    if ($(this).hasClass('rating3')) {
+        valor = 3;
+    }
+    if ($(this).hasClass('rating4')) {
+        valor = 4;
+    }
+    if ($(this).hasClass('rating5')) {
+        valor = 5;
+    }
+    console.log(valor);
+
+    $.ajax({
+        url: "/rating/",
+        data: "receitaid="+receitaid+"&valor="+valor,
+        success: function (data) {
+            console.log(Math.round(data));
+            if (userlogin) {
+                $("#rating-star").removeClass();
+                $("#rating-star").addClass('oh glyphter '+Math.round(data)+'-star');
+                $('.thanks-voting').fadeOut('fast');
+                $('.thanks-voting.thanks-rating').fadeIn('fast');
+                setTimeout(function() {
+                    $(".thanks-voting.thanks-rating").fadeOut('fast');
+                }, 2000);
+            }
+        }
+    });
+
+
+});
+
+
+
+$(".fav-button").click(function() {
+    var receitaid = $(this).data("receitaid");
+    $(this).closest('.actions').addClass('actual_fav');
+    //console.log(receitaid);
+    //console.log(user_login);
+
+    $.ajax({
+        url: "/fav/",
+        data: "receitaid="+receitaid,
+        success: function (data) {
+            //console.log(data);
+            //console.log($(".fav-button.glyphter"));
+            var actual_fav = $('.actual_fav');
+            if (actual_fav.children('.icon').children('.icon-div').children(".fav-button").hasClass('fav-blue')) {
+                actual_fav.children('.icon').children('.icon-div').children(".fav-button").removeClass('fav-blue');
+                $('.thanks-voting').fadeOut('fast');
+                actual_fav.children('.thanks-voting.thanks-fav-remove').fadeIn('fast');
+                setTimeout(function() {
+                    actual_fav.children(".thanks-voting.thanks-fav-remove").fadeOut('fast');
+                }, 2000);
+            } else {
+                actual_fav.children('.icon').children('.icon-div').children(".fav-button").addClass('fav-blue');
+                $('.thanks-voting').fadeOut('fast');
+                actual_fav.children('.thanks-voting.thanks-fav').fadeIn('fast');
+                setTimeout(function() {
+                    actual_fav.children(".thanks-voting.thanks-fav").fadeOut('fast');
+                }, 2000);
+            }
+            actual_fav.removeClass('actual_fav');
+        }
+    });
+
+});
+
+
+
+
+// PÁGINA DAS RECEITAS -------------------------------------------------------
+
+// MOSTRA OS DETALHES DAS RECEITAS
+
+$( document ).on( 'mouseenter', '.view', function () {
+    "use strict";
+    $(this).children(".mask").fadeIn(150);
+});
+
+$( document ).on( 'mouseleave', '.view', function () {
+    "use strict";
+    $(this).children(".mask").fadeOut(150);
+});
+
+
+// CHOSEN
+$("#ingredientes-select").bind('change',function() {
+    "use strict";
+    renderReceitas();
+});
+
+// SEARCH
+$('.noEnterSubmit').keypress(function(e){
+    if ( e.which == 13 ) e.preventDefault();
+});
+
+/*
+
+//CATEGORIES
+$( document ).on( 'click', '.receitas-menu .button', function () {
+    "use strict";
+
+    if ($(this).hasClass("selected")) {
+        $(this).removeClass("selected");
+    } else {
+        $('.receitas-menu .button').removeClass("selected");
+        $(this).addClass("selected");
+    }
+
+    $("#search").val(null);
+    $("#ingredientes-select").val(null);
+    $('#ingredientes-select').val('').trigger('chosen:updated');
+
+    //if ($(this).hasClass("selected")) $(this).removeClass("selected");
+    //else $(this).addClass("selected");
+
+    renderReceitas();
+});
+
+*/
+
+// CATEGORIES
+$("#categorias-select").bind('change',function() {
+    "use strict";
+
+    $("#search").val(null);
+    $("#ingredientes-select").val(null);
+    $('#ingredientes-select').val('').trigger('chosen:updated');
+
+    renderReceitas();
+});
+
+//PAGINATION
+$( document ).on( 'click', '#receitas .pagination a', function (e) {
+    var page = getParameterByName(this.href, "page");
+    renderReceitas("page="+page);
+    return false;
+});
+
+//SEARCH
+$(function() {
+    $("#search").keyup(function() { renderReceitas(); });
+});
+
+
+function getParameterByName(input, name) {
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&#]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( input );
+    if( results != null ) return results[1];
+    else return null;
+}
+
+/*
+function getCategorias() {
+    var categorias_seleccionadas = new Array();
+    $.each($('.receitas-menu .button.selected'), function(index, value) {
+        categorias_seleccionadas.push($(value).data("categoria-id"));
+    });
+    return categorias_seleccionadas;
+}
+*/
+
+function getCategorias() {
+    var categorias_seleccionadas = new Array();
+    if ($("#categorias-select").val() != null) {
+        categorias_seleccionadas = $("#categorias-select").val();
+    } else { categorias_seleccionadas = []};
+    //console.log(categorias_seleccionadas);
+    return categorias_seleccionadas;
+}
+
+function getIngredientes() {
+    var ingredientes_seleccionados = new Array();
+    if ($("#ingredientes-select").val() != null) {
+        ingredientes_seleccionados = $("#ingredientes-select").val().map(Number);
+    } else { ingredientes_seleccionados = []};
+    //console.log(ingredientes_seleccionados);
+    return ingredientes_seleccionados;
+}
+
+function renderReceitas(initial_data) {
+    var data = new Array();
+    if (typeof initial_data != "undefined") data.push(initial_data);
+    //console.log(initial_data)
+
+    var categorias_seleccionadas = getCategorias();
+    //if (typeof categorias_seleccionadas != "undefined" && categorias_seleccionadas.length > 0) data.push("categorias_seleccionadas="+categorias_seleccionadas.join(","));
+    if (typeof categorias_seleccionadas != "undefined" && categorias_seleccionadas.length > 0) data.push("categorias_seleccionadas="+categorias_seleccionadas);
+    //console.log(categorias_seleccionadas)
+
+    var ingredientes_seleccionados = getIngredientes();
+    if (typeof ingredientes_seleccionados != "undefined" && ingredientes_seleccionados.length > 0) data.push("ingredientes_seleccionados="+ingredientes_seleccionados.join(","));
+    //console.log(ingredientes_seleccionados)
+
+    var search_string = $("#search").val();
+    if (typeof search_string != "undefined" && search_string.length > 0) data.push("search="+search_string);
+
+    $.ajax({
+        url: "/ajax_receitas/",
+        data: data.join("&"),
+        success: function (data) {
+            //console.debug(data);
+            $("#receitas").html(data);
+        }
+    });
+}
+
+//CHAMADA AJAX INICIAL PARA CARREGAR RECEITAS
+$("#search").val(null);
+$("#ingredientes-select").val(null);
+$("#categorias-select").val(null);
+renderReceitas();
+
+
+
+// EMENTA -------------------------------------------------------
+
+//  EMENTA SALVA
+
+setTimeout(function() {
+  $("#ementa_salva").fadeOut();
+}, 2000);
+
+// ADICIONAR RECEITA
+
+$( document ).on( 'touchstart click', '.empty', function () {
+    if ($(this).hasClass('empty')) {
+        var celula = $(this).children(".tc").children(".add-receita").data("celula");
+        $(this).addClass("adicionar_receita");
+        console.log(celula);
+
+        add_nova_receita(celula, "0");
+    }
+});
+
+$( document ).on( 'click', '.reload', function () {
+    var celula;
+
+    if (!$(this).parent().parent().parent().hasClass('ementa-nome')) {
+        celula = $(this).data("celula");
+        receitaid = $(this).data("receitaid");
+        $(this).parent().parent().parent().addClass("adicionar_receita");
+        console.log(celula);
+
+        add_nova_receita(celula, receitaid);
+    }
+});
+
+function add_nova_receita(celula, receitaid) {
+    $.ajax({
+        url: "/add_ementa/",
+        data: "celula="+celula+"&receitaid="+receitaid,
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            var image_path = '<%= image_tag "arrow-option.png", :alt => "editar" %>';
+            var menu_ementa = '<div class="janela-opcoes-container">'+'<%= image_tag "arrow-option-up.png", :alt => "", :class => "arrow-up" %>'+'<div class="janela-opcoes-container2"><div class="janela-opcoes-titulo">Editar</div><div class="janela-opcoes-grupo"><select class="select-ementa select-novo receita-pessoas"><option value="2">2 Pessoas</option><option value="3">3 Pessoas</option><option value="4">4 Pessoas</option><option value="5">5 Pessoas</option><option value="6">6 Pessoas</option><option value="7">7 Pessoas</option><option value="8">8 Pessoas</option></select><div class="janela-opcao"><%= image_tag "lock.png", :alt => "bloquear" %><a class="bloquear" href="javascript:;" data-celula="'+data[0]+'">Bloquear</a></div></div></div></div>';
+
+            var conteudo = "<div class='nome-div'><span class='tc nome'>"+data[1]+"</span></div><div class='opcoes-receita'><div class='icon-div'><a class='glyphter reload' href='javascript:;' data-celula='"+data[0]+"' data-receitaid='"+data[3]+"'>v</a></div><div class='icon-div'><a class='glyphter delete' href='javascript:;' data-celula='"+data[0]+"'>N</a></div></div><div class='ementa-receita-option'><a href='javascript:;' class='link-receita-option' >" + image_path + "</a></div>";
+
+            if ($(".adicionar_receita").hasClass('empty')) {
+                $(".adicionar_receita").removeClass('empty');
+            }
+            if ($(".adicionar_receita").hasClass('lock')) {
+                $(".adicionar_receita").removeClass('lock');
+            }
+            $(".adicionar_receita").html(conteudo);
+            $(".adicionar_receita").children(".ementa-receita-option").append(menu_ementa);
+            $('.select-ementa.select-novo').ementa_select();
+            $(".ementa-receita").removeClass('adicionar_receita');
+            $(".select-novo.receita-pessoas2").children('.s-hidden').val(data[2]);
+            $(".select-novo.receita-pessoas2").children('.styledSelect').text(data[2] + " pessoas");
+            $(".select-ementa.select-novo").removeClass('select-novo');
+        },
+        error: function (err) {
+            console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+        }
+    });
+}
+
+$( document ).on( 'click', '.delete', function () {
+    var celula;
+
+    if (!$(this).parent().parent().parent().hasClass('ementa-nome')) {
+        celula = $(this).data("celula");
+        $(this).parent().parent().parent().removeClass('lock');
+        $(this).parent().parent().parent().addClass("adicionar_receita");
+        console.log(celula);
+
+        $.ajax({
+            url: "/ementa_delete/",
+            data: "celula="+celula,
+            contentType: 'application/json; charset=utf-8',
+            success: function (data) {
+                console.log(data);
+
+                var conteudo = '<span class="tc"><span class="add-receita" data-celula="'+data+'">X</span></span>';
+                $(".adicionar_receita").addClass('empty');
+                $(".adicionar_receita").html(conteudo);
+                $(".ementa-receita").removeClass('adicionar_receita');
+            },
+            error: function (err) {
+                console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+            }
+        });
+    }
+});
+
+
+// ABRE/FECHA AS OPÇÕES DA RECEITA NA EMENTA
+
+$( document ).on( 'click', '.link-receita-option', function () {
+    "use strict";
+    if ($(this).siblings('.janela-opcoes-container').is(':visible')) {
+        $(this).siblings('.janela-opcoes-container').fadeOut('fast');
+    } else {
+        $(".janela-opcoes-container").fadeOut('fast');
+        $(this).siblings('.janela-opcoes-container').fadeIn('fast');
+    }
+});
+
+
+// MOSTRA/ESCONDE COMPLEMENTOS
+
+$('#entrada-a').click(function () {
+    "use strict";
+
+    if (this.checked) {
+        $('#2').slideDown();
+        ajax_extras("entradaa", "activo");
+    } else {
+        $('#2').slideUp();
+        ajax_extras("entradaa", "inactivo");
+    }
+});
+
+$('#sobremesa-a').click(function () {
+    "use strict";
+
+    if (this.checked) {
+        $('#4').slideDown();
+        ajax_extras("sobremesaa", "activo");
+    } else {
+        $('#4').slideUp();
+        ajax_extras("sobremesaa", "inactivo");
+    }
+});
+
+$('#entrada-j').click(function () {
+    "use strict";
+
+    if (this.checked) {
+        $('#5').slideDown();
+        ajax_extras("entradaj", "activo");
+    } else {
+        $('#5').slideUp();
+        ajax_extras("entradaj", "inactivo");
+    }
+});
+
+$('#sobremesa-j').click(function () {
+    "use strict";
+
+    if (this.checked) {
+        $('#7').slideDown();
+        ajax_extras("sobremesaj", "activo");
+    } else {
+        $('#7').slideUp();
+        ajax_extras("sobremesaj", "inactivo");
+    }
+});
+
+function ajax_extras(refeicao, estado) {
+    $.ajax({
+        url: "/ementa_extras/",
+        data: "refeicao="+refeicao+"&estado="+estado,
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            var conteudo = '<div id="a'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="a'+data+'" class="add-receita">X</span></span></div><div id="b'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="b'+data+'" class="add-receita">X</span></span></div><div id="c'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="c'+data+'" class="add-receita">X</span></span></div><div id="d'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="d'+data+'" class="add-receita">X</span></span></div><div id="e'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="e'+data+'" class="add-receita">X</span></span></div><div id="f'+data+'" class="ementa-receita empty"><span class="tc"><span data-celula="f'+data+'" class="add-receita">X</span></span></div><div id="g'+data+'" class="ementa-receita empty last"><span class="tc"><span data-celula="g'+data+'" class="add-receita">X</span></span></div><div class="clearfix"></div>';
+            $("#"+data).html(conteudo);
+        },
+        error: function (err) {
+            console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+        }
+    });
+}
+
+$('.janela-opcao .ez-checkbox :checkbox').each(function() {
+    extra = $(this).parent().parent().data("extra");
+    console.log(extra);
+    if (extra=="activo") {
+        $(this).prop('checked', true);
+        $(this).parent().addClass('ez-checked');
+    } else {
+        $(this).prop('checked', false);
+        $(this).parent().removeClass('ez-checked');
+    }
+});
+
+$( document ).on( 'click', '.bloquear', function () {
+    "use strict";
+    var celula = $(this).data("celula");
+    var parent = $(this).parent().parent().parent().parent().parent().parent();
+    if (parent.hasClass('lock')) {
+        parent.removeClass('lock');
+        $(this).text('Bloquear');
+        ajax_lock(celula, "unlock");
+    } else {
+        parent.addClass('lock');
+        $(this).text('Desbloquear');
+        ajax_lock(celula, "lock");
+    }
+});
+
+$( document ).on( 'click', '.bloquear_refeicao', function () {
+    "use strict";
+    var celula = $(this).data("celula");
+    var parent = $(this).parent().parent().parent().parent().parent().parent();
+    if (parent.hasClass('lock')) {
+        parent.removeClass('lock');
+        $(this).text('Bloquear');
+        ajax_lock(celula, "unlock");
+    } else {
+        parent.addClass('lock');
+        $(this).text('Desbloquear');
+        ajax_lock(celula, "lock");
+    }
+});
+
+
+function ajax_lock(celula, estado) {
+    $.ajax({
+        url: "/ementa_lock/",
+        data: "celula="+celula+"&estado="+estado,
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            if (data[0]=="pa_lock") {
+                if (data[1]=="lock") {
+                    $("#1 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                } else {
+                    $("#1 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                }
+            }
+            if (data[0]=="a_lock") {
+                if (data[1]=="lock") {
+                    $("#2 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                    $("#3 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                    $("#4 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                } else {
+                    $("#2 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                    $("#3 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                    $("#4 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                }
+            }
+            if (data[0]=="j_lock") {
+                if (data[1]=="lock") {
+                    $("#5 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                    $("#6 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                    $("#7 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).addClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Desbloquear');
+                        }
+                    });
+                } else {
+                    $("#5 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                    $("#6 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                    $("#7 .ementa-receita").each(function () {
+                        if (!$(this).hasClass('empty')) {
+                            $(this).removeClass('lock');
+                            $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.janela-opcao').children('.bloquear').text('Bloquear');
+                        }
+                    });
+                }
+            }
+        },
+        error: function (err) {
+            console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+        }
+    });
+}
+
+
+$('#selectEmentaPrincipal2 .options li').click(function () {
+    "use strict";
+    var pessoas = $(this).val();
+
+    ajax_pessoas("all", pessoas);
+});
+
+$( document ).on( 'click', '.receita-pessoas2 .options li', function () {
+    "use strict";
+    var pessoas = $(this).val();
+    var celula = $(this).closest('.ementa-receita').attr('id');
+    console.log(pessoas);
+    console.log(celula);
+
+    ajax_pessoas(celula, pessoas);
+});
+
+$( document ).on( 'click', '.refeicao-pessoas2 .options li', function () {
+    "use strict";
+    var pessoas = $(this).val();
+    var celula = $(this).closest('.janela-opcoes-grupo').attr('id');
+    console.log(pessoas);
+    console.log(celula);
+
+    ajax_pessoas(celula, pessoas);
+});
+
+function ajax_pessoas(celula, pessoas) {
+    $.ajax({
+        url: "/ementa_pessoas/",
+        data: "celula="+celula+"&pessoas="+pessoas,
+        contentType: 'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            if (data[0]=="pa_pessoas") {
+               $("#1 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+            }
+            if (data[0]=="a_pessoas") {
+               $("#2 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+               $("#3 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+               $("#4 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+            }
+            if (data[0]=="j_pessoas") {
+               $("#5 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+               $("#6 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+               $("#7 .ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+            }
+            if (data[0]=="all") {
+               $(".ementa-receita").each(function () {
+                    if (!$(this).hasClass('empty') && !$(this).hasClass('lock')) {
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.s-hidden').val(data[1]);
+                        $(this).children('.ementa-receita-option').children('.janela-opcoes-container').children('.janela-opcoes-container2').children('.janela-opcoes-grupo').children('.select').children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+               $(".refeicao-pessoas2").each(function () {
+                    if (!$(this).closest('.ementa-nome').hasClass('lock')) {
+                        $(this).children('.s-hidden').val(data[1]);
+                        $(this).children('.styledSelect').text(data[1]+" pessoas");
+                    }
+                });
+            }
+        },
+        error: function (err) {
+            console.log("AJAX error in request: " + JSON.stringify(err, null, 2));
+        }
+    });
+}
+
+
+// FECHA AS COISAS AO CLICAR NO ECRÃ
+
+$( document ).on( 'click', function (e) {
+    "use strict";
+
+    var container = $(".janela-opcoes-container"),
+        container2 = $(".ementa-receita-option"),
+        container3 = $(".dropdown-home"),
+        container4 = $(".button-dropdown-home"),
+        container5 = $(".janela-gerir-conta"),
+        container6 = $(".user-options");
+
+// ementa
+
+    if (!container.is(e.target) && !container2.is(e.target) // if the target of the click isn't the container...
+            && container.has(e.target).length === 0 && container2.has(e.target).length === 0) { // ... nor a descendant of the container
+        container.fadeOut('fast');
+    }
+
+// Dropdown da home
+
+    if (!container3.is(e.target) && !container4.is(e.target) // if the target of the click isn't the container...
+            && container3.has(e.target).length === 0 && container4.has(e.target).length === 0) { // ... nor a descendant of the container
+        container3.fadeOut();
+    }
+
+// Opções da conta
+
+    if (!container5.is(e.target) && !container6.is(e.target) // if the target of the click isn't the container...
+            && container5.has(e.target).length === 0 && container6.has(e.target).length === 0) { // ... nor a descendant of the container
+        container5.fadeOut("fast");
+    }
+
+});

@@ -1,0 +1,313 @@
+<div id="wrap">
+	<div class="janela-opcoes-container">
+		<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+		<div class="janela-opcoes-container2">
+			<div class="janela-opcoes-titulo">
+				Editar
+			</div>
+			<div class="janela-opcoes-grupo">
+				<select class="select-ementa">
+					<option value="2">2 Pessoas</option>
+					<option value="3">3 Pessoas</option>
+					<option value="4">4 Pessoas</option>
+					<option value="5">5 Pessoas</option>
+					<option value="6">6 Pessoas</option>
+					<option value="7">7 Pessoas</option>
+					<option value="8">8 Pessoas</option>
+				</select>
+				<div class="janela-opcao"><%= image_tag 'lock.png', :alt => 'bloquear' %><a href="#">Bloquear</a></div>
+				<div class="janela-opcao"><%= image_tag 'reload.png', :alt => 'nova' %><a href="#">Gerar nova</a></div>
+				<div class="janela-opcao"><%= image_tag 'lixo.png', :alt => 'eliminar' %><a href="#">Eliminar</a></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="conteudo-pagina">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="titulo">Ementa semanal</div>
+				</div>
+			</div>
+
+			<div class="row mt60">
+				<div class="col-sm-8 text-left">
+					<a href="#" class="button">Gerar nova ementa</a>
+					<a href="#" class="button">Eliminar todos</a>
+					<select class="select-ementa">
+						<option value="2">2 Pessoas</option>
+						<option value="3">3 Pessoas</option>
+						<option value="4">4 Pessoas</option>
+						<option value="5">5 Pessoas</option>
+						<option value="6">6 Pessoas</option>
+						<option value="7">7 Pessoas</option>
+						<option value="8">8 Pessoas</option>
+					</select>
+				</div>
+				<div class="col-sm-4 text-right">
+					<a href="#" class="button">Ajuda</a>
+					<a href="#" class="image-link"><%= image_tag 'view-table.png', :alt => 'vista tabela' %></a>
+					<a href="ementa_diaria" class="image-link"><%= image_tag 'view-list.png', :alt => 'vista semanal' %></a>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 mt60">
+					<div class="ementa-container">
+						<div class="ementa-semana">
+							<div class="ementa-mes">
+								Abril
+								<span class="ementa-ano">2014</span>
+							</div>
+							<div class="ementa-semana-container">
+								<div class="ementa-semana-dia">
+									<div class="ementa-dia" id="a">
+										<span class="ementa-dia-nro">21</span>
+										seg
+									</div>
+									<div class="ementa-dia" id="b">
+										<span class="ementa-dia-nro">22</span>
+										ter
+									</div>
+									<div class="ementa-dia" id="c">
+										<span class="ementa-dia-nro">23</span>
+										qua
+									</div>
+									<div class="ementa-dia" id="d">
+										<span class="ementa-dia-nro">24</span>
+										qui
+									</div>
+									<div class="ementa-dia" id="e">
+										<span class="ementa-dia-nro">25</span>
+										sex
+									</div>
+									<div class="ementa-dia" id="f">
+										<span class="ementa-dia-nro">26</span>
+										sab
+									</div>
+									<div class="ementa-dia" id="g">
+										<span class="ementa-dia-nro">27</span>
+										dom
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="ementa-refeicao">
+							<div class="ementa-nome">
+								<div class="ementa-nome-container">
+									<div class="nome">Pequeno-almoço</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+								</div>
+							</div>
+							<div class="ementa-refeicao-container">
+								<div class="ementa-refeicao-principal alone">
+									<div class="ementa-receita" id="a1"></div>
+									<div class="ementa-receita" id="b1"></div>
+									<div class="ementa-receita" id="c1"></div>
+									<div class="ementa-receita" id="d1"></div>
+									<div class="ementa-receita" id="e1"></div>
+									<div class="ementa-receita" id="f1"></div>
+									<div class="ementa-receita last" id="g1"></div>
+								</div>
+							</div>
+						</div>
+						<div class="ementa-refeicao">
+							<div class="ementa-nome">
+								<div class="ementa-nome-container">
+									<div class="nome">Almoço</div>
+									<div class="ementa-extras">
+										<form action="">
+											<input type="checkbox" name="a" id="a-2" value="2" checked>entrada<br>
+											<input type="checkbox" name="a" id="a-4" value="4" checked>sobremesa 
+										</form>
+									</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+								</div>
+							</div>
+							<div class="ementa-refeicao-container">
+								<div class="ementa-refeicao-secundaria" id="2">
+									<div class="ementa-receita" id="a2"></div>
+									<div class="ementa-receita" id="b2"></div>
+									<div class="ementa-receita" id="c2"></div>
+									<div class="ementa-receita" id="d2"></div>
+									<div class="ementa-receita" id="e2"></div>
+									<div class="ementa-receita" id="f2"></div>
+									<div class="ementa-receita last" id="g2"></div>
+								</div>
+								<div class="ementa-refeicao-principal" id="3">
+									<div class="ementa-receita" id="a3">
+										<span class="tc">
+											Lacinhos com frango
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="b3">
+										<span class="tc">
+											Dourada grelhada com tomate
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="c3">
+										<span class="tc">
+											Lasanha de frango com salada
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="d3">
+										<span class="tc">
+											Perna de perú assada
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="e3">
+										<span class="tc">
+											Tomates recheados
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="f3"></div>
+									<div class="ementa-receita last" id="g3"></div>
+								</div>
+								<div class="ementa-refeicao-secundaria" id="4">
+									<div class="ementa-receita" id="a4"></div>
+									<div class="ementa-receita" id="b4"></div>
+									<div class="ementa-receita" id="c4"></div>
+									<div class="ementa-receita" id="d4"></div>
+									<div class="ementa-receita" id="e4"></div>
+									<div class="ementa-receita" id="f4"></div>
+									<div class="ementa-receita last" id="g4"></div>
+								</div>
+							</div>
+						</div>
+						<div class="ementa-refeicao">
+							<div class="ementa-nome">
+								<div class="ementa-nome-container">
+									<div class="nome">Jantar</div>
+									<div class="ementa-extras">
+										<form action="">
+											<input type="checkbox" name="j" id="j-5" value="5" checked>entrada<br>
+											<input type="checkbox" name="j" id="j-7" value="7" checked>sobremesa 
+										</form>
+									</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+								</div>
+							</div>
+							<div class="ementa-refeicao-container">
+								<div id="5" class="ementa-refeicao-secundaria">
+									<div class="ementa-receita" id="a5"></div>
+									<div class="ementa-receita" id="b5"></div>
+									<div class="ementa-receita" id="c5"></div>
+									<div class="ementa-receita" id="d5"></div>
+									<div class="ementa-receita" id="e5"></div>
+									<div class="ementa-receita" id="f5"></div>
+									<div class="ementa-receita last" id="g5"></div>
+								</div>
+								<div id="6" class="ementa-refeicao-principal">
+									<div class="ementa-receita" id="a6">
+										<span class="tc">
+											Perna de perú recheada
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="b6">
+										<span class="tc">
+											Lombo de porco com ameixa
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="c6">
+										<span class="tc">
+											Carapau grelhado com ervas
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="d6">
+										<span class="tc">
+											Fusili com cogumelos
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="e6">
+										<span class="tc">
+											Peito de frango com limão
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="f6">
+										<span class="tc">
+											Lasanha de frango com salada
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita last" id="g6"></div>
+								</div>
+								<div id="7" class="ementa-refeicao-secundaria">
+									<div class="ementa-receita" id="a7"></div>
+									<div class="ementa-receita" id="b7">
+										<span class="tc">
+											Mousse de manga
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="c7"></div>
+									<div class="ementa-receita" id="d7">
+										<span class="tc">
+											Cheesecake light de limão
+										</span>
+										<div class="ementa-receita-option">
+											<a href="javascript:;"><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+										</div>
+									</div>
+									<div class="ementa-receita" id="e7"></div>
+									<div class="ementa-receita" id="f7"></div>
+									<div class="ementa-receita last" id="g7"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 mt30 text-left">
+					<a href="#" class="button">Guardar</a>
+					<a href="#" class="button">Download</a>
+					<a href="#" class="button">Lista de compras</a>
+					<a href="#" class="button">Imprimir</a>
+					<a href="#" class="button">Partilhar</a>
+				</div>
+			</div>
+		
+		</div>
+	</div>
+</div>

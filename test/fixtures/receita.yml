@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nome: MyString
+  tempo: 1
+  dificuldade: 1
+  descricao: MyText
+
+two:
+  nome: MyString
+  tempo: 1
+  dificuldade: 1
+  descricao: MyText

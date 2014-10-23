@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  receita_id: 1
+  passo: MyString
+
+two:
+  receita_id: 1
+  passo: MyString

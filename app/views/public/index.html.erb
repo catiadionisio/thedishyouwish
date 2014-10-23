@@ -1,0 +1,240 @@
+<div id="first">
+	<div class="content tc">
+		<div class="container">
+				<div class="row">
+						<div class="col-md-12">
+								<div class="logo"><%= image_tag 'logo.png',:alt => 'logo' %></div>
+								<div class="intro visible-xs">As receitas dos seus sonhos adequadas à sua diabetes</div>
+						</div>
+						<div class="col-md-12 hidden-xs">
+								<div class="row">
+									<div class="col-md-10 col-md-offset-1">
+										<div class="frase-ementa">Crie a sua ementa semanal:</div>
+										<div class="intro">As receitas dos seus sonhos adequadas à sua diabetes</div>
+									</div>
+									<div class="col-md-10 col-md-offset-1 mt10">									
+										<form action="ementa/gerar_ementa">
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="dropdown-home-container">
+													<div class="dropdown-home">
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="a" id="seg">
+															<label for="seg"><div class="checkbox-label">Segunda</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="b" id="ter">
+															<label for="ter"><div class="checkbox-label">Terça</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="c" id="qua">
+															<label for="qua"><div class="checkbox-label">Quarta</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="d" id="qui">
+															<label for="qui"><div class="checkbox-label">Quinta</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="e" id="sex">
+															<label for="sex"><div class="checkbox-label">Sexta</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="f" id="sab">
+															<label for="sab"><div class="checkbox-label">Sábado</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home dias-home" type="checkbox" name="dias[]" value="g" id="dom">
+															<label for="dom"><div class="checkbox-label">Domingo</div></label>
+														</div>
+													</div>
+													<div class="button-dropdown-home n-dias-home">Dias</div>
+												</div>
+											</div>
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="dropdown-home-container">
+													<div class="dropdown-home">
+														<div class="dropdown-home-option">
+															<input class="checkbox-home refeicoes-home" type="checkbox" name="refeicoes[]" value="palmoco" id="palmoco">
+															<label for="palmoco"><div class="checkbox-label">Pequeno-almoço</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home refeicoes-home" type="checkbox" name="refeicoes[]" value="almoco" id="almoco">
+															<label for="almoco"><div class="checkbox-label">Almoço</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home refeicoes-home" type="checkbox" name="refeicoes[]" value="jantar" id="jantar">
+															<label for="jantar"><div class="checkbox-label">Jantar</div></label>
+														</div>
+													</div>
+													<div class="button-dropdown-home n-refeicoes-home">Refeições</div>
+												</div>
+											</div>
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="dropdown-home-container">
+													<div class="dropdown-home">
+														<div class="dropdown-home-option">
+															<input checked class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="2" id="2px">
+															<label for="2px"><div class="checkbox-label">2 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="3" id="3px">
+															<label for="3px"><div class="checkbox-label">3 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="4" id="4px">
+															<label for="4px"><div class="checkbox-label">4 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="5" id="5px">
+															<label for="5px"><div class="checkbox-label">5 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="6" id="6px">
+															<label for="6px"><div class="checkbox-label">6 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="7" id="7px">
+															<label for="7px"><div class="checkbox-label">7 Pessoas</div></label>
+														</div>
+														<div class="dropdown-home-option">
+															<input class="checkbox-home pessoas-home" type="radio" name="numeropessoas" value="8" id="8px">
+															<label for="8px"><div class="checkbox-label">8 Pessoas</div></label>
+														</div>
+													</div>
+													<div class="button-dropdown-home n-pessoas-home">Pessoas</div>
+												</div>
+											</div>
+
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<input class="button-dropdown-submit" type="submit" value="Criar ementa">
+											</div>
+										</form>
+									</div>
+								</div>
+						</div>
+				</div>
+		</div>
+	</div>
+</div>
+
+<div id="second">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="titulo">Quem somos</div>
+				<p class="sub">
+					The dish you wish é uma plataforma desenvolvida a pensar em quem  tem diabetes.
+				</p>
+			</div>
+			<div class="col-xs-12 col-md-10 col-md-offset-1">
+				<p>
+					Sabemos que nem sempre é fácil resistir aos doces e nem sempre temos ideias para variar a alimentação, sobretudo quando existem restrições alimentares que se repercutem directamente na nossa saúde, por isso, e tendo em conta todas as preocupações dos nossos utilizadores, organizámos métodos simples, rápidos e eficazes de conseguir ter uma alimentação saudável sem abdicar do sabor que tanto gosta.
+				</p>
+
+				<%= link_to("Ver mais", "sobre", { :class=>"button mt30" }) %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="third">
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-5 col-md-offset-1">
+				<div class="equipa-imagem">
+					<%= image_tag 'nutricionista.png', :alt => 'Nutricionistas' %>
+				</div>
+				<div class="titulo-equipa">Nutricionistas</div>
+				<p class="">
+					É por sabermos que não se brinca com a saúde que procurámos apoio especializado junto de uma equipa de nutricionistas que testam e ajustam cada receita introduzida na nossa plataforma. Assim conseguimos afirmar com toda a certeza que as nossas receitas estão totalmente adequadas a pessoas que têm diabetes.
+				</p>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-5">
+				<div class="equipa-imagem equipa-imagem-margin">
+					<%= image_tag 'chef.png', :alt => 'Chef' %>
+				</div>
+				<div class="titulo-equipa">Chefs</div>
+				<p class="">
+					Porque comer bem e de forma saudável e variada é possível contamos com uma equipa de chefs que tornam tudo muito saboroso sem ter de pagar por isso. Receitas deliciosas e saudáveis são os motes destes profissionais que juntam o melhor dos dois mundos à sua mesa.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="fourth" class="white">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="titulo">Últimas</div>
+				<p class="sub">
+					Veja as últimas receitas adicionadas e torne-as parte da sua ementa.
+				</p>
+			</div>
+		</div>
+		<div class="row">
+			<% i = 0 %>
+			<% for receita in @ultimas_receitas %>
+				<% if (i < 3) then %>
+					<div class="col-xs-12 col-sm-6 col-lg-4 mt10">
+				<% else %>
+					<div class="col-xs-12 col-sm-6 hidden-lg mt10">
+				<% end %>
+					<div class="receitas-container">
+						<div class="view">
+							<%= image_tag(receita.imagem.url(:list), :class => 'img-responsive', alt: receita[:nome]) %>
+							<div class="mask">
+								<div class="dt">
+									<div class="tc">
+										<div class="mask-des"><%= truncate(receita[:descricao], :length => 180, :omission => '(...)') %></div>
+									</div>
+								</div>
+							</div>
+
+						</div> 
+						<div class="dt">
+							<div class="tc">
+								<div class="nome-receita">
+									<%= link_to(truncate(receita[:nome], :length => 45), "receita/#{receita[:id]}") %>
+								</div>
+							</div>
+							<div class="rating-receita hidden-xs">
+								<% if receita.ratings.length > 0 %>
+									<% average = receita.ratings.collect(&:classificacao).sum.to_f/receita.ratings.length %>
+								<% else %>
+									<% average = 0 %>
+								<% end %>
+
+
+								<% if average < 0.5 %>
+									<%= image_tag 'star0.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% elsif average < 1.5 %>
+									<%= image_tag 'star1.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% elsif average < 2.5 %>
+									<%= image_tag 'star2.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% elsif average < 3.5 %>
+									<%= image_tag 'star3.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% elsif average < 4.5 %>
+									<%= image_tag 'star4.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% else %>
+									<%= image_tag 'star5.png', :alt => 'Rating', :class => 'img-responsive' %>
+								<% end %>
+							</div>
+						</div>
+						<ul class="info-receita">
+							<% if receita.calorias %>
+								<li><%= receita[:calorias] %> Kcal</li>
+							<% end %>
+							<% if receita.gorduras %>
+								<li><%= receita[:gorduras] %><span class="small">g</span> Gorduras</li>
+							<% end %>
+							<% if receita.hidratos %>
+								<li><%= receita[:hidratos] %><span class="small">g</span> Hidratos</li>
+							<% end %>
+               			</ul>
+					</div>
+				</div>
+				<% i += 1 %>
+			<% end %>
+		</div>
+	</div>
+</div>

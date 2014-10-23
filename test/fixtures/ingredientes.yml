@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nome: MyString
+  seccao_id: 1
+  peso_medio: 1.5
+
+two:
+  nome: MyString
+  seccao_id: 1
+  peso_medio: 1.5

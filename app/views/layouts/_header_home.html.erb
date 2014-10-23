@@ -1,0 +1,51 @@
+<nav class="navbar navbar-default navbar-grey" role="navigation">
+	<div class="container">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapse1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="collapse1">
+			<ul class="nav navbar-nav">
+					<li><%= link_to "Receitas", receitas_path %></li>
+					<li><%= link_to "Ementa", ementa_path %></li>
+				<% if user_signed_in? %>
+					<li><%= link_to current_user.nome, perfil_path %>
+					<a href="javascript:;" class="user-options"><%= image_tag 'arrow-white.png',:alt => 'opções' %></a>
+					</li>
+				<% else %>
+					<li><%= link_to 'Login', new_user_session_path %></li>
+				<% end %>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container -->
+</nav>
+
+<% if user_signed_in? %>
+	<div class="janela-gerir-conta">
+		<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+		<div class="janela-gerir-conta2">
+			<div class="janela-gerir-titulo">
+				Perfil
+			</div>
+			<div class="janela-gerir-grupo">
+				<div class="janela-gerir-opcao">
+					<%= link_to("Perfil", perfil_path) %>
+				</div>
+				<div class="janela-gerir-opcao">
+					<%= link_to("Favoritos", receitas_favoritas_path) %>
+				</div>
+				<div class="janela-gerir-opcao">
+					<%= link_to("Ementas", ementas_guardadas_path) %>
+				</div>
+				<div class="janela-gerir-opcao"><%= link_to "Logout", destroy_user_session_path, :method => :delete %></div>
+			</div>
+		</div>
+	</div>
+<% end %>

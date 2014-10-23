@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  receita_id: 1
+  tiporefeicao_id: 1
+
+two:
+  receita_id: 1
+  tiporefeicao_id: 1

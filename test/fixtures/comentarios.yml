@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  data: 2014-06-05
+  user_id: 1
+  conteudo: MyText
+  receita_id: 1
+
+two:
+  data: 2014-06-05
+  user_id: 1
+  conteudo: MyText
+  receita_id: 1

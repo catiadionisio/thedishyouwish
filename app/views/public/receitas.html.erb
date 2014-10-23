@@ -1,0 +1,48 @@
+<div id="wrap">
+	<div class="conteudo-pagina">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="titulo">As nossas receitas</div>
+				</div>
+			</div>
+
+			<!-- CATEGORIAS ANTIGO	
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="receitas-menu">
+						<% @categorias.each do |categoria| %>
+							<%= link_to(categoria[:nome], "javascript:;", { :class => "button", :data => { :categoria_id=> categoria[:id] } }) %>
+						<% end %>
+					</div>
+				</div>
+			</div>
+
+			-->
+
+			<div class="row mt20">
+				<div class="col-md-4 mt10">
+					<div class="pesquisar-receitas">
+						<%= form_tag receitas_path, :method => 'get', :id => "receitas_search" do %>
+							<%= text_field_tag :search, params[:search], :class => 'noEnterSubmit', :placeholder => "Pesquisar" %>
+						<% end %>
+					</div>
+				</div>
+				<div class="col-md-4 mt10">
+					<div class="categorias-menu">
+						<%= select_tag("categorias-select", options_from_collection_for_select(@categorias, "id", "nome"), { :class =>'chosen-select2', prompt: "Todas as categorias"} ) %>
+					</div>
+				</div>
+				<div class="col-md-4 mt10">
+					<div class="ingredientes-menu">
+						<%= select_tag("ingredientes-select", options_from_collection_for_select(@ingredientes, "id", "nome"), { :multiple => true, :class =>'chosen-select'} ) %>
+					</div>
+				</div>
+			</div>
+
+				
+			<div id="receitas" class="mt20"></div>
+		</div>
+	</div>
+</div>

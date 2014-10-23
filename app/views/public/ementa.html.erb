@@ -1,0 +1,788 @@
+<div id="wrap">
+	<div class="conteudo-pagina">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="titulo">Ementa semanal</div>
+				</div>
+			</div>
+
+			<% @date = !session["data_ementa"].blank? ? session["data_ementa"].to_date : Date.today %>
+
+			<% if !session[:erro_restricoes].blank? %>
+				<% session.delete(:erro_restricoes) %>
+				<div id="ementa_salva">
+					Algumas receitas não foram adicionadas devido a restrições.
+				</div>
+			<% end %>
+					
+			<div class="row mt30 hidden-xs">
+				<div class="col-sm-8 text-left">
+					<% if !session[:return_to].blank? %>
+						<% session.delete(:return_to) %>
+						<div id="ementa_salva">
+							A ementa foi salva com sucesso!
+						</div>
+					<% end %>
+					<% if user_signed_in? %>
+						<%= link_to (!session["ementa"].blank? ? "Actualizar Ementa" : "Guardar Ementa"), ementa_guardar_ementa_path(:day => @date, :ne => "0"), {:class=>"button"} %>
+					<% else %>
+						<%= link_to("Guardar Ementa", new_user_session_path, { :class => "button" }) %>
+					<% end %>
+					<a href="/ementa/nova_ementa" class="button">Gerar nova ementa</a>
+					<a href="/ementa/reset" class="button">Eliminar todos</a>
+					<select class="select-ementa"  name="selectEmentaPrincipal" id="selectEmentaPrincipal">
+						<% if !session["all"].blank? %>
+							<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["all"].to_s) %>
+						<% else %>
+							<option value="2">2 Pessoas</option>
+							<option value="3">3 Pessoas</option>
+							<option value="4">4 Pessoas</option>
+							<option value="5">5 Pessoas</option>
+							<option value="6">6 Pessoas</option>
+							<option value="7">7 Pessoas</option>
+							<option value="8">8 Pessoas</option>
+						<% end %>
+					</select>
+				</div>
+				<div class="col-sm-4 text-right">
+					<%= link_to("Ajuda", ajuda_path, { :class => "button", :target => "_blank" }) %>
+					<span class="ementa-icon">
+						<div class="icon-div">
+							<%= link_to image_tag("view-table.png", :border => 0), "ementa", {:class => 'image-link'} %>
+							<div class="label-icon">Vista semanal</div>
+						</div>
+						<div class="icon-div">
+							<%= link_to image_tag("view-list.png", :border => 0), "ementa_diaria", {:class => 'image-link'} %>
+							<div class="label-icon">Vista diária</div>
+						</div>
+					</span>
+				</div>
+			</div>
+
+			<div class="row hidden-xs">
+				<div class="col-md-12 mt60">
+					<div class="ementa-container">
+						<div class="ementa-semana">
+							<div class="ementa-mes">
+								<%= l(@date, format: :month_format) %>
+								<!-- <%=h @date.strftime("%B") %> -->
+								<span class="ementa-ano"><%= @date.year %></span>
+							</div>
+							<div class="ementa-semana-container">
+								<%= link_to "e", "/ementa/prev_day", {:class=>"prev-day glyphter"} %>
+								<div class="ementa-semana-dia">
+									<div class="ementa-dia" id="a">
+										<span class="ementa-dia-nro"><%= @date.day %></span>
+										<!-- <%=h @date.strftime("%a") %> -->
+										<%= l(@date, format: :day_format) %>
+									</div>
+									<div class="ementa-dia" id="b">
+										<span class="ementa-dia-nro"><%= (@date+1).day %></span>
+										<%= l(@date+1, format: :day_format) %>
+										<!-- <%=h (@date+1).strftime("%a") %> -->
+									</div>
+									<div class="ementa-dia" id="c">
+										<span class="ementa-dia-nro"><%= (@date+2).day %></span>
+										<%= l(@date+2, format: :day_format) %>
+										<!-- <%=h (@date+2).strftime("%a") %> -->
+									</div>
+									<div class="ementa-dia" id="d">
+										<span class="ementa-dia-nro"><%= (@date+3).day %></span>
+										<%= l(@date+3, format: :day_format) %>
+										<!-- <%=h (@date+3).strftime("%a") %> -->
+									</div>
+									<div class="ementa-dia" id="e">
+										<span class="ementa-dia-nro"><%= (@date+4).day %></span>
+										<%= l(@date+4, format: :day_format) %>
+										<!-- <%=h (@date+4).strftime("%a") %> -->
+									</div>
+									<div class="ementa-dia" id="f">
+										<span class="ementa-dia-nro"><%= (@date+5).day %></span>
+										<%= l(@date+5, format: :day_format) %>
+										<!-- <%=h (@date+5).strftime("%a") %> -->
+									</div>
+									<div class="ementa-dia" id="g">
+										<span class="ementa-dia-nro"><%= (@date+6).day %></span>
+										<%= l(@date+6, format: :day_format) %>
+										<!-- <%=h (@date+6).strftime("%a") %> -->
+									</div>
+								</div>
+								<%= link_to "f", "/ementa/next_day", {:class=>"next-day glyphter"} %>
+							</div>
+						</div>
+						<div class="ementa-refeicao">
+							<%= content_tag :div, { :class => (session["pa_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+								<div class="ementa-nome-container">
+									<span class="tc">
+										<div class="nome">Pequeno-almoço</div>
+									</span>
+								</div>
+								<div class="opcoes-receita">
+									<div class="icon-div">
+										<%= link_to("v", "add_ementa_refeicao?celula=pa", { :class => "glyphter reload" }) %>
+									</div>
+									<div class="icon-div">
+										<%= link_to("N", "ementa_delete_refeicao?celula=pa", { :class => "glyphter delete" }) %>
+									</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+									<div class="janela-opcoes-container">
+										<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+										<div class="janela-opcoes-container2">
+											<div class="janela-opcoes-titulo">
+												Editar
+											</div>
+											<div class="janela-opcoes-grupo" id="pa_pessoas">
+												<select class="select-ementa refeicao-pessoas">
+													<% if !session["pa_pessoas"].blank? %>
+														<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["pa_pessoas"].to_s) %>
+													<% else %>
+														<option value="2">2 Pessoas</option>
+														<option value="3">3 Pessoas</option>
+														<option value="4">4 Pessoas</option>
+														<option value="5">5 Pessoas</option>
+														<option value="6">6 Pessoas</option>
+														<option value="7">7 Pessoas</option>
+														<option value="8">8 Pessoas</option>
+													<% end %>
+												</select>
+												<div class="janela-opcao">
+													<%= image_tag 'lock.png', :alt => 'bloquear' %>
+													<%= link_to((session["pa_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "pa_lock" } }) %>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							<% end %>
+							<div class="ementa-refeicao-container">
+								<div class="ementa-refeicao-principal alone" id="1">
+									<% @letter_array = ["a","b","c", "d", "e", "f", "g"] %>
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"1"].blank? %>
+										<% if !session[letter+"1"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"1"][:lock] == "lock" ? " lock" : ""), :id => letter+"1"} do %>
+												<% receita_ementa = Receita.find(session[letter+"1"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"1", :receitaid => session[letter+"1"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"1" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"1"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"1"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"1"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"1"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"1"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="ementa-refeicao">
+							<%= content_tag :div, { :class => (session["a_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+								<div class="ementa-nome-container">
+									<span class="tc">
+										<div class="nome">Almoço</div>
+									</span>
+								</div>
+								<div class="opcoes-receita">
+									<div class="icon-div">
+										<%= link_to("v", "add_ementa_refeicao?celula=a", { :class => "glyphter reload" }) %>
+									</div>
+									<div class="icon-div">
+										<%= link_to("N", "ementa_delete_refeicao?celula=a", { :class => "glyphter delete" }) %>
+									</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+									<div class="janela-opcoes-container">
+										<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+										<div class="janela-opcoes-container2">
+											<div class="janela-opcoes-titulo">
+												Editar
+											</div>
+											<div class="janela-opcoes-grupo" id="a_pessoas">
+												<select class="select-ementa refeicao-pessoas">
+													<% if !session["a_pessoas"].blank? %>
+														<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["a_pessoas"].to_s) %>
+													<% else %>
+														<option value="2">2 Pessoas</option>
+														<option value="3">3 Pessoas</option>
+														<option value="4">4 Pessoas</option>
+														<option value="5">5 Pessoas</option>
+														<option value="6">6 Pessoas</option>
+														<option value="7">7 Pessoas</option>
+														<option value="8">8 Pessoas</option>
+													<% end %>
+												</select>
+												<div class="janela-opcao">
+													<%= image_tag 'lock.png', :alt => 'bloquear' %>
+													<%= link_to((session["a_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "a_lock" } }) %>
+												</div>
+											</div>
+											<div class="janela-opcoes-titulo titulo2">
+												Adicionar
+											</div>
+											<div class="janela-opcoes-grupo">
+												<%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["entradaa"] == "activo" ? "activo" : "inactivo")}} do %>
+													<input type="checkbox" id='entrada-a' class="entrada" value="entrada">
+													<label for="entrada-a">Entrada</label>
+												<% end %>
+												<%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["sobremesaa"] == "activo" ? "activo" : "inactivo")}} do %>
+													<input type="checkbox" id='sobremesa-a' class="sobremesa" value="sobremesa">
+													<label for="sobremesa-a">Sobremesa</label>
+												<% end %>
+											</div>
+										</div>
+									</div>
+								</div>
+							<% end %>
+							<div class="ementa-refeicao-container">
+								<% if session["entradaa"] == "activo" %>
+								<div class="ementa-refeicao-secundaria ementa-entrada" id="2">
+								<% else %>
+								<div class="ementa-refeicao-secundaria ementa-entrada" style="display: none;" id="2">
+								<% end %>
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"2"].blank?%>
+										<% if !session[letter+"2"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"2"][:lock] == "lock" ? " lock" : ""), :id => letter+"2"} do %>
+												<% receita_ementa = Receita.find(session[letter+"2"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"2", :receitaid => session[letter+"2"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"2" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"2"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"2"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"2"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"2"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"2"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+								<div class="ementa-refeicao-principal" id="3">
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"3"].blank? %>
+										<% if !session[letter+"3"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"3"][:lock] == "lock" ? " lock" : ""), :id => letter+"3"} do %>
+												<% receita_ementa = Receita.find(session[letter+"3"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"3", :receitaid => session[letter+"3"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"3" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"3"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"3"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"3"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"3"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"3"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+								<% if session["sobremesaa"] == "activo" %>
+								<div class="ementa-refeicao-secundaria ementa-sobremesa" id="4">
+								<% else %>
+								<div class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;" id="4">
+								<% end %>
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"4"].blank? %>
+										<% if !session[letter+"4"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"4"][:lock] == "lock" ? " lock" : ""), :id => letter+"4"} do %>
+												<% receita_ementa = Receita.find(session[letter+"4"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"4", :receitaid => session[letter+"4"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"4" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"4"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"4"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"4"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"4"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"4"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="ementa-refeicao">
+							<%= content_tag :div, { :class => (session["j_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+								<div class="ementa-nome-container">
+									<span class="tc">
+										<div class="nome">Jantar</div>
+									</span>
+								</div>
+								<div class="opcoes-receita">
+									<div class="icon-div">
+										<%= link_to("v", "add_ementa_refeicao?celula=j", { :class => "glyphter reload" }) %>
+									</div>
+									<div class="icon-div">
+										<%= link_to("N", "ementa_delete_refeicao?celula=j", { :class => "glyphter delete" }) %>
+									</div>
+								</div>
+								<div class="ementa-receita-option">
+									<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+									<div class="janela-opcoes-container">
+										<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+										<div class="janela-opcoes-container2">
+											<div class="janela-opcoes-titulo">
+												Editar
+											</div>
+											<div class="janela-opcoes-grupo" id="j_pessoas">
+												<select class="select-ementa refeicao-pessoas">
+													<% if !session["j_pessoas"].blank? %>
+														<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["j_pessoas"].to_s) %>
+													<% else %>
+														<option value="2">2 Pessoas</option>
+														<option value="3">3 Pessoas</option>
+														<option value="4">4 Pessoas</option>
+														<option value="5">5 Pessoas</option>
+														<option value="6">6 Pessoas</option>
+														<option value="7">7 Pessoas</option>
+														<option value="8">8 Pessoas</option>
+													<% end %>
+												</select>
+												<div class="janela-opcao">
+													<%= image_tag 'lock.png', :alt => 'bloquear' %>
+													<%= link_to((session["j_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "j_lock" } }) %>
+												</div>
+											</div>
+											<div class="janela-opcoes-titulo titulo2">
+												Adicionar
+											</div>
+											<div class="janela-opcoes-grupo">
+												<%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["entradaj"] == "activo" ? "activo" : "inactivo")}} do %>
+													<input type="checkbox" id='entrada-j' class="entrada" value="entrada">
+													<label for="entrada-j">Entrada</label>
+												<% end %>
+												<%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["sobremesaj"] == "activo" ? "activo" : "inactivo")}} do %>
+													<input type="checkbox" id='sobremesa-j' class="sobremesa" value="sobremesa">
+													<label for="sobremesa-j">Sobremesa</label>
+												<% end %>
+											</div>
+										</div>
+									</div>
+								</div>
+							<% end %>
+							<div class="ementa-refeicao-container">
+								<% if session["entradaj"] == "activo" %>
+								<div id="5" class="ementa-refeicao-secundaria ementa-entrada">
+								<% else %>
+								<div id="5" class="ementa-refeicao-secundaria ementa-entrada" style="display: none;">
+								<% end %>
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"5"].blank? %>
+										<% if !session[letter+"5"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"5"][:lock] == "lock" ? " lock" : ""), :id => letter+"5"} do %>
+												<% receita_ementa = Receita.find(session[letter+"5"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"5", :receitaid => session[letter+"5"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"5" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"5"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"5"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"5"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"5"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"5"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+								<div id="6" class="ementa-refeicao-principal">
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"6"].blank? %>
+										<% if !session[letter+"6"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"6"][:lock] == "lock" ? " lock" : ""), :id => letter+"6"} do %>
+												<% receita_ementa = Receita.find(session[letter+"6"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"6", :receitaid => session[letter+"6"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"6" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"6"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"6"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"6"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"6"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"6"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+								<% if session["sobremesaj"] == "activo" %>
+								<div id="7" class="ementa-refeicao-secundaria ementa-sobremesa">
+								<% else %>
+								<div id="7" class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;">
+								<% end %>
+									<% i=0 %>
+									<% @letter_array.each do |letter| %>
+										<% if !session[letter+"7"].blank? %>
+										<% if !session[letter+"7"][:receita].blank? %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"7"][:lock] == "lock" ? " lock" : ""), :id => letter+"7"} do %>
+												<% receita_ementa = Receita.find(session[letter+"7"][:receita]) %>
+												<div class="nome-div">
+													<span class="tc nome">
+														
+														<%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+													</span>
+												</div>
+												<div class="opcoes-receita">
+													<div class="icon-div">
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"7", :receitaid => session[letter+"7"][:receita] } }) %>
+													</div>
+													<div class="icon-div">
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"7" } }) %>
+													</div>
+												</div>
+												<div class="ementa-receita-option">
+													<a href="javascript:;" class="link-receita-option" ><%= image_tag 'arrow-option.png', :alt => 'editar' %></a>
+													<div class="janela-opcoes-container">
+														<%= image_tag 'arrow-option-up.png', :alt => '', :class => 'arrow-up' %>
+														<div class="janela-opcoes-container2">
+															<div class="janela-opcoes-titulo">
+																Editar
+															</div>
+															<div class="janela-opcoes-grupo">
+																<select class="select-ementa receita-pessoas">
+																	<% if !session[letter+"7"][:pessoas].blank? %>
+																		<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"7"][:pessoas].to_s) %>
+																	<% else %>
+																		<option value="2">2 Pessoas</option>
+																		<option value="3">3 Pessoas</option>
+																		<option value="4">4 Pessoas</option>
+																		<option value="5">5 Pessoas</option>
+																		<option value="6">6 Pessoas</option>
+																		<option value="7">7 Pessoas</option>
+																		<option value="8">8 Pessoas</option>
+																	<% end %>
+																</select>
+																<div class="janela-opcao">
+																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
+																	<%= link_to((session[letter+"7"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+										<% else %>
+											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"7"} do %>
+												<span class="tc">
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"7"}} %>
+												</span>
+											<% end %>
+											<% i+=1 %>
+										<% end %>
+									<% end %>
+									<div class="clearfix"></div>
+								</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row hidden-xs">
+				<div class="col-md-12 mt60 text-left">
+					<%= link_to("Download", request.fullpath+".pdf", { :class=>"button", :target => "_blank"}) %>
+					<%= link_to("Lista de compras", "ementa/lista_ementa.pdf", { :class=>"button", :target => "_blank"}) %>
+					<% if !session["ementa"].blank? %>
+						<% if user_signed_in? %>
+							<%= link_to "Guardar nova", ementa_guardar_ementa_path(:day => @date, :ne => "1"), {:class=>"button"} %>
+						<% else %>
+							<%= link_to("Guardar nova", new_user_session_path, { :class => "button" }) %>
+						<% end %>
+					<% end %>
+				</div>
+			</div>
+
+			<div class="row visible-xs mt30">
+				<div class="col-xs-12">
+					Lamentamos mas a personalização da ementa só está disponível em dispositivos com um ecrã maior.
+				</div>
+			</div>
+		
+		</div>
+	</div>
+</div>

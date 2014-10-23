@@ -1,0 +1,333 @@
+<div id="wrap">
+
+	<div class="container receita-individual">
+		<div class="row">
+			<div class="col-xs-12 col-md-10 col-lg-8 col-md-offset-1 col-lg-offset-2">
+				<div class="titulo"><%= @verReceita[:nome] %></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="imagem-receita" style="background-image: url(<%= @verReceita.imagem.url(:web) %>)"></div>
+
+	<div class="conteudo-pagina mt30">
+		<div class="container">
+			<div class="row">
+
+				<div class="col-md-10 col-xs-12 col-md-offset-1">
+					<p class="sub">
+						<%= @verReceita[:descricao] %>
+					</p>
+				</div>
+
+				<div class="col-md-12">
+					<div class="actions">
+						<div class="icon">
+							<div class="icon-div">
+								<%= link_to("s", @verReceita[:id].to_s+".pdf", { :class=>"glyphter", :target => "_blank"}) %>
+								<div class="label-icon">Download</div>
+							</div>
+
+							<div class="icon-div">
+								<% if user_signed_in? %>
+									<% if fav = UserReceita.where(:user_id => current_user.id, :receita_id => @verReceita[:id]).first %>
+										<%= link_to("i", "javascript:;", { :class => "glyphter fav-button fav-blue", :data => { :receitaid=> @verReceita[:id] } }) %>
+									<% else %>
+										<%= link_to("i", "javascript:;", { :class => "glyphter fav-button", :data => { :receitaid=> @verReceita[:id] } }) %>
+									<% end %>
+									<div class="label-icon">Favorito</div>
+								<% else %>
+									<%= link_to("i", new_user_session_path, { :class => "glyphter fav-button" }) %>
+									<div class="label-icon">Favorito</div>
+								<% end %>
+							</div>
+
+						</div>
+						<div class="icon-div">
+							<%= content_tag :div, {class: "rating-receita"} do %>
+								<% if @verReceita.ratings.length > 0 %>
+									<% average = @verReceita.average_rating %>
+								<% else %>
+									<% average = 0 %>
+								<% end %>
+
+
+								<% if average < 0.5 %>
+									<%= content_tag :div, { :class => "oh glyphter 0-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">q</span>
+											<span class="rating-vote rating2">q</span>
+											<span class="rating-vote rating3">q</span>
+											<span class="rating-vote rating4">q</span>
+											<span class="rating-vote rating5">q</span>
+										<% else %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% elsif average < 1.5 %>
+									<%= content_tag :div, { :class => "oh glyphter 1-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">V</span>
+											<span class="rating-vote rating2">q</span>
+											<span class="rating-vote rating3">q</span>
+											<span class="rating-vote rating4">q</span>
+											<span class="rating-vote rating5">q</span>
+										<% else %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% elsif average < 2.5 %>
+									<%= content_tag :div, { :class => "oh glyphter 2-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">V</span>
+											<span class="rating-vote rating2">V</span>
+											<span class="rating-vote rating3">q</span>
+											<span class="rating-vote rating4">q</span>
+											<span class="rating-vote rating5">q</span>
+										<% else %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% elsif average < 3.5 %>
+									<%= content_tag :div, { :class => "oh glyphter 3-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">V</span>
+											<span class="rating-vote rating2">V</span>
+											<span class="rating-vote rating3">V</span>
+											<span class="rating-vote rating4">q</span>
+											<span class="rating-vote rating5">q</span>
+										<% else %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% elsif average < 4.5 %>
+									<%= content_tag :div, { :class => "oh glyphter 4-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">V</span>
+											<span class="rating-vote rating2">V</span>
+											<span class="rating-vote rating3">V</span>
+											<span class="rating-vote rating4">V</span>
+											<span class="rating-vote rating5">q</span>
+										<% else %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("q", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% else %>
+									<%= content_tag :div, { :class => "oh glyphter 5-star", :id => "rating-star", :data => { :receitaid=> @verReceita[:id], :userlogin => user_signed_in?}} do %>
+										<% if user_signed_in? %>
+											<span class="rating-vote rating1">V</span>
+											<span class="rating-vote rating2">V</span>
+											<span class="rating-vote rating3">V</span>
+											<span class="rating-vote rating4">V</span>
+											<span class="rating-vote rating5">V</span>
+										<% else %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating1" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating2" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating3" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating4" }) %>
+											<%= link_to("V", new_user_session_path, { :class => "rating-vote rating5" }) %>
+										<% end %>
+									<% end %>
+								<% end %>
+							<% end %>
+							<div class="label-icon">Classificar</div>
+						</div>
+						<div class="thanks-voting thanks-fav">
+							Adicionado aos favoritos!
+						</div>
+						<div class="thanks-voting thanks-fav-remove">
+							Removido dos favoritos!
+						</div>
+						<div class="thanks-voting thanks-rating">
+							Obrigada pelo teu voto!
+						</div>
+					</div>
+				</div>
+
+				<div class="col-sm-4 col-md-3 text-left ingredientes-grupo">
+
+					<div class="info-nutricional">
+						<div class="info-block">
+							<%= image_tag 'clock.png', :alt => 'Tempo' %>
+							<div class="tempo"><%= @verReceita[:tempo] %> min</div>
+						</div>
+						
+						<div class="info-block">
+							<%= image_tag 'tabela.png', :alt => 'Tempo' %>
+							<div class="titulo-info">Valores nutricionais <span class="small">(V.D.R)</span></div>
+						</div>
+
+						<ol class="info-valores">
+							<% if @verReceita.calorias %>
+								<li><%= @verReceita[:calorias] %> <span class="info-title">Kcal</span></li>
+							<% end %>
+
+							<% if @verReceita.hidratos %>
+								<li><%= @verReceita[:hidratos] %>g <span class="info-title">Hidratos de carbono</span></li>
+							<% end %>
+
+							<% if @verReceita.gorduras %>
+								<li><%= @verReceita[:gorduras] %>g <span class="info-title">Gorduras</span></li>
+							<% end %>
+
+							<% if @verReceita.proteinas %>
+								<li><%= @verReceita[:proteinas] %>g <span class="info-title">Proteínas</span></li>
+							<% end %>
+
+							<% if @verReceita.acucar %>
+								<li><%= @verReceita[:acucar] %>g <span class="info-title">Açúcares</span></li>
+							<% end %>
+						</ol>
+					</div>
+
+					<%= link_to("Lista de compras", "lista_receita/"+@verReceita[:id].to_s+".pdf", { :class=>"button", :target => "_blank"}) %>
+
+					<%= content_tag :span, { :class => "select-receita-pessoas", :id => @verReceita[:id]} do %>
+						<select class="select-ementa" name="changeNpessoas" id="changeNpessoas">
+							<% if !session["receita"+@verReceita[:id].to_s+"_pessoas"].blank? %>
+								<%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["receita"+@verReceita[:id].to_s+"_pessoas"].to_s) %>
+							<% else %>
+								<option value="2">2 Pessoas</option>
+								<option value="3">3 Pessoas</option>
+								<option value="4">4 Pessoas</option>
+								<option value="5">5 Pessoas</option>
+								<option value="6">6 Pessoas</option>
+								<option value="7">7 Pessoas</option>
+								<option value="8">8 Pessoas</option>
+							<% end %>
+						</select>
+					<% end %>
+
+					<%= content_tag :div, { :class => "select-receita-ingredientes", :id => !session["receita"+@verReceita[:id].to_s+"_pessoas"].blank? ? session["receita"+@verReceita[:id].to_s+"_pessoas"] : "2"} do %>
+						<ol class="ingredientes">
+							<% @verReceita.receita_ingredientes.each do |p| %>
+								<li>
+									<% if (p.medida.to_s == "Unidade") %>
+										<span class="blue"><span class="quantidade"><%= (p.quantidade.to_f*2) / @verReceita[:pessoas] %></span></span> <%= p.ingrediente.to_s.downcase %>
+
+									<% elsif (p.medida.to_s == "q.b.") %>
+										<%= p.ingrediente.to_s.downcase %> <%= p.medida.to_s.downcase %>
+
+									<% elsif (p.medida.to_s == "Grama") %>
+										<span class="blue"><span class="quantidade"><%= (p.quantidade.to_f*2) / @verReceita[:pessoas] %>g</span>g</span> <%= p.ingrediente.to_s.downcase %>
+
+									<% elsif (p.medida.to_s == "Mililitro") %>
+										<span class="blue"><span class="quantidade"><%= (p.quantidade.to_f*2) / @verReceita[:pessoas] %>ml</span>ml</span> <%= p.ingrediente.to_s.downcase %>
+
+									<% else %>
+										<span class="blue"><span class="quantidade"><%= (p.quantidade.to_f*2) / @verReceita[:pessoas] %></span> <%= p.medida.to_s.downcase %> </span> de <%= p.ingrediente.to_s.downcase %>
+									<% end %>
+
+									<% if (!p.nota.empty?) %>
+										(<%= p.nota.to_s %>)
+									<% end %>
+								</li>
+							<% end %>
+						</ol>
+					<% end %>
+
+				</div>
+				<div class="col-xs-12 text-left visible-xs">
+					<div class="confeccao-titulo">
+						Confecção:
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-8 col-md-9 text-left confeccao-grupo">
+					<ol class="confeccao">
+						<% @verReceita.confeccaos.sort_by!{|m| m.ordem}.each do |p| %>
+							<li><%= p.passo %></li>
+						<% end %>
+					</ol>
+				</div>
+			</div>
+
+			<div class="row comentarios">
+				<div class="col-md-12">
+					<div class="titulo comentario-receita-div">
+						Comentários
+					</div>
+					<div class="comentarios-descricao">
+						Diz-nos o que achaste desta receita
+					</div>
+				</div>
+			</div>
+
+			<div class="row comentarios">
+				<div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 mt30">
+					<div class="novo-comentario">
+						<% if user_signed_in? %>
+							<%= form_tag("salvar_comentario", :multipart => true, :method => "post") do %>
+							  <%= text_area_tag("conteudo", nil, :class => 'area-comentario') %> <br>
+							  <%= hidden_field_tag("receitaid", @verReceita[:id]) %>
+							  <%= hidden_field_tag("nome", current_user.nome) %>
+							  <%= submit_tag "Enviar", :class => "comentario_submit" %>
+							<% end %>
+						<% else %>
+							<%= form_tag("salvar_comentario", :multipart => true, :method => "post") do %>
+							  Nome: <%= text_field_tag("nome", "", :class => 'area-nome') %> <br>
+							  <%= text_area_tag("conteudo", nil, :class => 'area-comentario') %> <br>
+							  <%= hidden_field_tag("receitaid", @verReceita[:id]) %>
+							  <%= submit_tag "Enviar", :class => "comentario_submit" %>
+							<% end %>
+						<% end %>
+					</div>
+				</div>
+			</div>
+
+			<div class="row comentarios">
+				<div class="col-md-12">
+					<div class="comentarios-users">
+						<% @verReceita.comentarios.each do |p| %>
+							<div class="comentario">
+								<div class="comentario-foto">
+									<% if p.user_id != nil %>
+										<% if (p.user.photo.exists?) %>
+											<%= image_tag p.user.photo.url(:medium) %>
+										<% else %>
+											<% if (p.user.provider == "facebook") %>
+												<%= image_tag(p.user.mediumFacebookImage) %>
+											<% else %>
+												<%= image_tag p.user.photo.url(:medium) %>
+											<% end %>
+										<% end %>
+									<% else %>
+										<%= image_tag 'missing.png', :alt => 'Foto' %>
+									<% end %>
+								</div>
+
+								<div class="comentario-dados">
+									<div class="comentario-header">
+										<%= p.nome %> | <%= p.created_at.strftime("%m.%d.%Y") %>
+									</div>
+									<div class="comentario-conteudo">
+										<%= simple_format(p.conteudo) %>
+									</div>
+								</div>
+							</div>
+						<% end %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

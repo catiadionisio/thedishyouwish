@@ -1,0 +1,75 @@
+				<div class="row" id="receitas">
+
+					<% if (@receitas.blank?) %>
+						<h2 class="mt30">Não existem reultados!</h2>
+					<% else %>
+						<%
+						@receitas.each do |receita|
+							if receita != nil
+						%>
+							<div class="col-xs-12 col-sm-6 col-lg-4 mt30">
+								<div class="receitas-container">
+									<div class="view">
+										<%= image_tag(receita.imagem.url(:list), :class => 'img-responsive', alt: receita[:nome]) %>
+										<div class="mask">
+											<div class="dt">
+												<div class="tc">
+													<div class="mask-des"><%= truncate(receita[:descricao], :length => 180, :omission => '(...)') %></div>
+												</div>
+											</div>
+										</div>
+
+									</div> 
+									<div class="dt">
+										<div class="tc">
+											<div class="nome-receita">
+												<%= link_to(truncate(receita[:nome], :length => 45), "receita/#{receita[:id]}") %>
+											</div>
+										</div>
+										<div class="rating-receita hidden-xs">
+											<% if receita.ratings.length > 0 %>
+												<% average = receita.average_rating %>
+											<% else %>
+												<% average = 0 %>
+											<% end %>
+
+
+											<% if average < 0.5 %>
+												<%= image_tag 'star0.png', :alt => 'Rating' %>
+											<% elsif average < 1.5 %>
+												<%= image_tag 'star1.png', :alt => 'Rating' %>
+											<% elsif average < 2.5 %>
+												<%= image_tag 'star2.png', :alt => 'Rating' %>
+											<% elsif average < 3.5 %>
+												<%= image_tag 'star3.png', :alt => 'Rating' %>
+											<% elsif average < 4.5 %>
+												<%= image_tag 'star4.png', :alt => 'Rating' %>
+											<% else %>
+												<%= image_tag 'star5.png', :alt => 'Rating' %>
+											<% end %>
+										</div>
+									</div>
+									<ul class="info-receita">
+										<% if receita.calorias %>
+											<li><%= receita[:calorias] %> Kcal</li>
+										<% end %>
+										<% if receita.gorduras %>
+											<li><%= receita[:gorduras] %><span class="small">g</span> Gorduras</li>
+										<% end %>
+										<% if receita.hidratos %>
+											<li><%= receita[:hidratos] %><span class="small">g</span> Hidratos</li>
+										<% end %>
+			               			</ul>
+								</div>
+							</div>
+						<% end %>
+						<% end %>
+
+					<% end %>
+				</div>
+
+				<div class="row">
+					<div class="col-md-12">
+						<%= will_paginate @receitas %>
+					</div>
+				</div>

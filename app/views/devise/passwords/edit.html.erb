@@ -1,0 +1,42 @@
+<div id="wrap">
+  <div class="conteudo-pagina">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="titulo">Alterar password</div>
+        </div>
+      </div>
+
+      <div class="row mt10">
+        <div class="col-md-4 col-md-offset-4 login">
+        	<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+			  <%= devise_error_messages! %>
+			  <%= f.hidden_field :reset_password_token %>
+	        	<div class="row">
+	        		<div class="col-xs-12">
+	        			<%= f.label :password, "Nova password:" %> <br>
+	        			<%= f.password_field :password, autofocus: true, autocomplete: "off" %>
+	        		</div>
+	        	</div>
+	        	<div class="row mt10">
+	        		<div class="col-xs-12">
+	        			<%= f.label :password_confirmation, "Confirmar nova password:" %> <br>
+	        			<%= f.password_field :password_confirmation, autocomplete: "off" %>
+	        		</div>
+	        	</div>
+				<div class="row">
+					<div class="col-xs-12 mt10">
+		        		<%= f.submit "Mudar password" %>
+		        	</div>
+				</div>
+			<% end %>
+			<div class="row">
+				<div class="col-xs-12">
+					<%= render "devise/shared/links" %>
+				</div>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>The dish you wish</title>
+	<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<%= csrf_meta_tags %>
+</head>
+<body>
+	<% if current_page?(root_path) %>
+		<%= render :partial => 'layouts/header_home' %>
+	<% else %>
+		<%= render :partial => 'layouts/header' %>
+	<% end %>
+
+	<%= yield %>
+
+	<%= render :partial => 'layouts/footer' %>
+	
+	<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+</body>
+</html>

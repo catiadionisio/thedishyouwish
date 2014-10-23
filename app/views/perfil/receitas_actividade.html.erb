@@ -1,0 +1,192 @@
+<div id="wrap">
+    <div class="conteudo-pagina perfil">
+        <div class="top-perfil">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="foto-perfil">
+                            <% if (current_user.photo.exists?) %>
+                                <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                            <% else %>
+                                <% if (current_user.provider == "facebook") %>
+                                    <%= image_tag current_user.mediumFacebookImage, :alt => 'Foto', :class => 'img-responsive' %>
+                                <% else %>
+                                    <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                                <% end %>
+                            <% end %>
+                        </div>
+                        <div class="info-perfil">
+                            <div class="nome-perfil">
+                                <%= link_to current_user.nome, perfil_path %>
+                            </div>
+                            <div class="email-perfil">
+                                <%= current_user.email %>
+                            </div>
+                            <div class="dados-perfil">
+                                <% if (!current_user.sexo.empty?) %>
+                                    <div class="dados">                            
+                                        <%= image_tag current_user.sexo+'.png', :alt => current_user.sexo %>
+                                        <%= current_user.sexo.capitalize %>
+                                    </div>
+                                <% end %>
+                                <% if (!current_user.datanasc.blank?) %> 
+                                    <div class="dados ml">   
+                                        <%= image_tag 'age.png', :alt => 'idade' %>                     
+                                        <%= current_user.age(current_user.datanasc) %> anos
+                                    </div>
+                                <% end %>
+                                <div class="dados ml">
+                                    <%= image_tag 'edit.png', :alt => 'editar' %>
+                                    <%= link_to "Editar perfil", edit_user_registration_path %>
+                                </div>
+                            </div>
+                            <div class="guardados-perfil">
+                                <%= link_to("Receitas favoritas (#{@receitas.length})", receitas_favoritas_path, { :class => "button" }) %>
+                                <%= link_to("Ementas guardadas (#{@ementas.length})", ementas_guardadas_path, { :class => "button" }) %>
+                                <%= link_to("Restrições (#{@restricoes.length})", restricoes_path, { :class => "button" }) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            </div>      
+        </div>
+        <div class="bottom-perfil">
+            <div class="title-perfil-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title-perfil">Receitas favoritas (<%= @receitas_guardadas.length %>)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt30">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="ementa-diaria mt40">
+                            <% empty = 0 %>
+                            <% @receitas_guardadas.each do |receita| %>
+                                <% empty += 1 %>
+
+                                <div class="bloco-receita">
+                                    
+                                    <div class="col-xs-12 col-sm-5 col-lg-5 mt10">
+                                        <%= image_tag(receita.imagem.url(:list), :class => 'img-responsive', alt: receita[:nome]) %>
+
+                                        <div class="receita-diaria-info">
+                                            <div class="actions">
+                                                <div class="icon">
+                                                    <div class="icon-div">
+                                                        <%= link_to("s", "receita/"+receita[:id].to_s+".pdf", { :class=>"glyphter", :target => "_blank"}) %>
+                                                        <div class="label-icon">Download</div>
+                                                    </div>
+
+                                                    <div class="icon-div">
+                                                        <% if user_signed_in? %>
+                                                            <% if fav = UserReceita.where(:user_id => current_user.id, :receita_id => receita[:id]).first %>
+                                                                <%= link_to("i", "javascript:;", { :class => "glyphter fav-button fav-blue", :data => { :receitaid=> receita[:id] } }) %>
+                                                            <% else %>
+                                                                <%= link_to("i", "javascript:;", { :class => "glyphter fav-button", :data => { :receitaid=> receita[:id] } }) %>
+                                                            <% end %>
+                                                            <div class="label-icon">Favorito</div>
+                                                        <% else %>
+                                                            <%= link_to("i", new_user_session_path, { :class => "glyphter fav-button" }) %>
+                                                            <div class="label-icon">Favorito</div>
+                                                        <% end %>
+                                                    </div>
+
+                                                </div>
+                                                <div class="icon-div hidden-xs">
+                                                    <%= content_tag :div, {class: "rating-receita"} do %>
+                                                        <% if receita.ratings.length > 0 %>
+                                                            <% average = receita.average_rating %>
+                                                        <% else %>
+                                                            <% average = 0 %>
+                                                        <% end %>
+
+
+                                                        <% if average < 0.5 %>
+                                                            <%= image_tag 'star0.png', :alt => 'Rating' %>
+                                                        <% elsif average < 1.5 %>
+                                                            <%= image_tag 'star1.png', :alt => 'Rating' %>
+                                                        <% elsif average < 2.5 %>
+                                                            <%= image_tag 'star2.png', :alt => 'Rating' %>
+                                                        <% elsif average < 3.5 %>
+                                                            <%= image_tag 'star3.png', :alt => 'Rating' %>
+                                                        <% elsif average < 4.5 %>
+                                                            <%= image_tag 'star4.png', :alt => 'Rating' %>
+                                                        <% else %>
+                                                            <%= image_tag 'star5.png', :alt => 'Rating' %>
+                                                        <% end %>
+                                                    <% end %>
+                                                    <div class="label-icon">Rating</div>
+                                                </div>
+                                                <div class="thanks-voting thanks-fav">
+                                                    Adicionado aos favoritos!
+                                                </div>
+                                                <div class="thanks-voting thanks-fav-remove">
+                                                    Removido dos favoritos!
+                                                </div>
+                                            </div>
+                                            <div class="receita-diaria-buttons">
+                                                <%= link_to("Ver receita", "receita/#{receita.id}", { :class => "button", :target => "_blank" }) %>
+                                            </div>  
+                                            <div style="clear: both;"></div>    
+                                        </div>                          
+                                    </div>
+                                    <div class="col-xs-12 col-sm-7 col-lg-7 mt10">
+                                        <div class="nome-receita-diaria"> <%= receita.nome %> </div>
+                                        <div class="info-nutricional">
+                                            <div class="info-block">
+                                                <%= image_tag 'clock.png', :alt => 'Tempo' %>
+                                                <div class="tempo"><%= receita[:tempo] %> min</div>
+                                            </div>
+                                            
+                                            <div class="info-block">
+                                                <%= image_tag 'tabela.png', :alt => 'Tempo' %>
+                                                <div class="titulo-info">Valores nutricionais <span class="small">(V.D.R)</span></div>
+                                            </div>
+
+                                            <ol class="info-valores">
+                                                <% if receita.calorias %>
+                                                    <li><%= receita[:calorias] %> <span class="info-title">Kcal</span></li>
+                                                <% end %>
+
+                                                <% if receita.hidratos %>
+                                                    <li><%= receita[:hidratos] %>g <span class="info-title">Hidratos de carbono</span></li>
+                                                <% end %>
+
+                                                <% if receita.gorduras %>
+                                                    <li><%= receita[:gorduras] %>g <span class="info-title">Gorduras</span></li>
+                                                <% end %>
+
+                                                <% if receita.proteinas %>
+                                                    <li><%= receita[:proteinas] %>g <span class="info-title">Proteínas</span></li>
+                                                <% end %>
+
+                                                <% if receita.acucar %>
+                                                    <li><%= receita[:acucar] %>g <span class="info-title">Açúcares</span></li>
+                                                <% end %>
+                                            </ol>
+                                        </div>
+
+                                        <p class="sub-diaria">
+                                            <%= receita[:descricao] %>
+                                        </p>
+                                        
+                                    </div>
+                                </div>
+                            <% end %>   
+                            <% if empty == 0 %>
+                                <div class="ementa-diaria-subrefeicao mt60">
+                                    Não existem receitas a apresentar.
+                                </div>
+                            <% end %>                   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

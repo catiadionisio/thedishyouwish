@@ -1,0 +1,77 @@
+# Additional translations at https://github.com/plataformatec/devise/wiki/I18n
+
+"pt":
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "não foi inserido."
+              taken: "utilizado, introduz um endereço de email diferente."
+              invalid: "não é válido."
+            password:
+              blank: "não inserida."
+              confirmation: "não corresponde."
+              too_short: "demasiado curta (mínimo 8 caracteres)."
+            password_confirmation:
+              blank: "(repita a password)."
+              confirmation: "(as passwords têm de ser iguais)."
+            current_password:
+              blank: "actual não inserida."
+  devise:
+    confirmations:
+      confirmed: "A tua conta foi confirmada com sucesso."
+      send_instructions: "Dentro de minutos irás receber um email com instruções sobre como confirmar a tua conta."
+      send_paranoid_instructions: "Caso o teu endereço de email exista na nossa base de dados, vais receber um email com instruções sobe como confirmar a tua conta dentro de alguns minutos."
+    failure:
+      already_authenticated: "Já tens o login feito."
+      inactive: "A tua conta ainda não está activada."
+      invalid: "Password ou email inválido."
+      locked: "A tua conta está bloqueada."
+      last_attempt: "Tens apenas mais uma tentativa antes da tua conta ser bloqueada."
+      not_found_in_database: "Password ou email inválido."
+      timeout: "A tua sessão expirou. Por favor faz login novamente para continuar."
+      unauthenticated: "É necessário efectuar o login antes de continuar."
+      unconfirmed: "É necessário confirmares a tua conta antes de continuar."
+    mailer:
+      confirmation_instructions:
+        subject: "Instruções de confirmação"
+      reset_password_instructions:
+        subject: "Restabelecer instruções de password"
+      unlock_instructions:
+        subject: "Instruções de desbloqueio"
+    omniauth_callbacks:
+      failure: "Não foi possível autenticar a tua conta como %{kind}, porque \"%{reason}\"."
+      success: "A tua conta foi autenticada com sucesso para %{kind}."
+    passwords:
+      no_token: "Não podes aceder a esta página sem pedires para restabelecer a tua password primeiro. Se vieste a partir do email, por favor confirma se colocaste o URL correcto."
+      send_instructions: "Vais receber um email com as instruções de como restabelecer a tua password dentro de alguns minutos."
+      send_paranoid_instructions: "Caso o teu endereço de email exista na nossa base de dados, vais receber um email para recuperar a tua password dentro de alguns minutos."
+      updated: "A tua password foi alterada com sucesso. Estás agora com o login feito."
+      updated_not_active: "A tua password foi alterada com sucesso."
+    registrations:
+      destroyed: "A tua conta foi cancelada com sucesso, esperamos ver-te novamente dentro em breve."
+      signed_up: "Bem-vindo! A tua conta foi registada com sucesso."
+      signed_up_but_inactive: "A tua conta foi registada com sucesso. No entanto, não consegues efectuar o login enquanto tua conta não for activada."
+      signed_up_but_locked: "A tua conta foi registada com sucesso. No entanto, não consegues efectuar o login porque a tua conta está bloqueada."
+      signed_up_but_unconfirmed: "Foi enviada uma mensagem com um link de confirmação para o teu endereço de email. Por favor, acede a esse link para activares a tua conta."
+      update_needs_confirmation: "A tua conta foi actualizada com sucesso, mas precisamos de verificar o teu novo endereço de email. Por favor verifica o teu endereço de email e acede ao link de confirmação para finalização a operação."
+      updated: "A tua conta foi actualizada com sucesso."
+    sessions:
+      signed_in: "Login feito com sucesso"
+      signed_out: "Logout feito com sucesso."
+    unlocks:
+      send_instructions: "Dentro de minutos, irás receber um email com instruções sobre como desbloquear a tua conta."
+      send_paranoid_instructions: "Caso a tua conta exista, irás receber dentro de minutos um email com instruções sobre como desbloquear a tua conta."
+      unlocked: "A tua conta foi desbloqueada com sucesso. Efectua o login para continuar."
+  errors:
+    messages:
+      already_confirmed: "já foi confirmado, por favor tenta efectuar o login"
+      confirmation_period_expired: "precisa de ser confirmado dentro de %{period}, por favor efectua um novo pedido"
+      expired: "expirou, por favor efectua um novo pedido"
+      not_found: "não encontrado"
+      not_locked: "não foi bloqueado"
+      not_saved:
+        one: "1 Erro::"
+        other: "%{count} erros:"

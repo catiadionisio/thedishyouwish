@@ -1,0 +1,359 @@
+<div id="wrap">
+    <div class="conteudo-pagina perfil">
+        <div class="top-perfil">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="foto-perfil">
+                            <% if (current_user.photo.exists?) %>
+                                <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                            <% else %>
+                                <% if (current_user.provider == "facebook") %>
+                                    <%= image_tag current_user.mediumFacebookImage, :alt => 'Foto', :class => 'img-responsive' %>
+                                <% else %>
+                                    <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                                <% end %>
+                            <% end %>
+                        </div>
+                        <div class="info-perfil">
+                            <div class="nome-perfil">
+                                <%= link_to current_user.nome, perfil_path %>
+                            </div>
+                            <div class="email-perfil">
+                                <%= current_user.email %>
+                            </div>
+                            <div class="dados-perfil">
+                                <% if (!current_user.sexo.empty?) %>
+                                    <div class="dados">                            
+                                        <%= image_tag current_user.sexo+'.png', :alt => current_user.sexo %>
+                                        <%= current_user.sexo.capitalize %>
+                                    </div>
+                                <% end %>
+                                <% if (!current_user.datanasc.blank?) %> 
+                                    <div class="dados ml">   
+                                        <%= image_tag 'age.png', :alt => 'idade' %>                     
+                                        <%= current_user.age(current_user.datanasc) %> anos
+                                    </div>
+                                <% end %>
+                                <div class="dados ml">
+                                    <%= image_tag 'edit.png', :alt => 'editar' %>
+                                    <%= link_to "Editar perfil", edit_user_registration_path %>
+                                </div>
+                            </div>
+                            <div class="guardados-perfil">
+                                <%= link_to("Receitas favoritas (#{@receitas.length})", receitas_favoritas_path, { :class => "button" }) %>
+                                <%= link_to("Ementas guardadas (#{@ementas_guardadas})", ementas_guardadas_path, { :class => "button" }) %>
+                                <%= link_to("Restrições (#{@restricoes.length})", restricoes_path, { :class => "button" }) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            </div>      
+        </div>
+        <div class="bottom-perfil">
+            <div class="title-perfil-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title-perfil">Ementas guardadas (<%= @ementas.length %>)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="ementa-diaria">
+                            <% empty = 0 %>
+                            <% @ementas.each do |ementa| %>
+                                <% empty += 1 %>
+
+                                <div class="ementa-diaria-subrefeicao mt60">
+                                    <%= l(ementa.data.to_date, format: :day_long) %>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 mt30">
+                                        <div class="ementa-container">
+                                            <div class="ementa-semana">
+                                                <div class="ementa-mes">
+                                                    <%= l(ementa.data.to_date, format: :month_format) %>
+                                                    <span class="ementa-ano"><%= ementa.data.to_date.year %></span>
+                                                </div>
+                                                <div class="ementa-semana-container">
+                                                    <div class="ementa-semana-dia">
+                                                        <div class="ementa-dia" id="a">
+                                                            <span class="ementa-dia-nro"><%= ementa.data.to_date.day %></span>
+                                                            <%= l(ementa.data.to_date, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="b">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+1).day %></span>
+                                                            <%= l(ementa.data.to_date+1, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="c">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+2).day %></span>
+                                                            <%= l(ementa.data.to_date+2, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="d">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+3).day %></span>
+                                                            <%= l(ementa.data.to_date+3, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="e">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+4).day %></span>
+                                                            <%= l(ementa.data.to_date+4, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="f">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+5).day %></span>
+                                                            <%= l(ementa.data.to_date+5, format: :day_format) %>
+                                                        </div>
+                                                        <div class="ementa-dia" id="g">
+                                                            <span class="ementa-dia-nro"><%= (ementa.data.to_date+6).day %></span>
+                                                            <%= l(ementa.data.to_date+6, format: :day_format) %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="ementa-refeicao">
+                                                <%= content_tag :div, { :class => (session["pa_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                                    <div class="ementa-nome-container">
+                                                        <span class="tc">
+                                                            <div class="nome">Pequeno-almoço</div>
+                                                        </span>
+                                                    </div>
+                                                <% end %>
+                                                <div class="ementa-refeicao-container">
+                                                    <div class="ementa-refeicao-principal alone" id="1">
+                                                        <% @letter_array = ["a","b","c", "d", "e", "f", "g"] %>
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"1")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="ementa-refeicao">
+                                                <%= content_tag :div, { :class => (session["a_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                                    <div class="ementa-nome-container">
+                                                        <span class="tc">
+                                                            <div class="nome">Almoço</div>
+                                                        </span>
+                                                    </div>
+                                                <% end %>
+                                                <div class="ementa-refeicao-container">
+                                                    <% receita_extra = EmentaReceita.where(:ementa_id => ementa.id).where('celula LIKE ?', "%2") %>
+                                                    <% if receita_extra.length > 0 %>
+                                                    <div class="ementa-refeicao-secundaria ementa-entrada" id="2">
+                                                    <% else %>
+                                                    <div class="ementa-refeicao-secundaria ementa-entrada" style="display: none;" id="2">
+                                                    <% end %>
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"2")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <% receita_extra.clear %>
+                                                    <div class="ementa-refeicao-principal" id="3">
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"3")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    
+                                                    <% receita_extra = EmentaReceita.where(:ementa_id => ementa.id).where('celula LIKE ?', "%4") %>
+                                                    <% if receita_extra.length > 0 %>
+                                                    <div class="ementa-refeicao-secundaria ementa-sobremesa" id="4">
+                                                    <% else %>
+                                                    <div class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;" id="4">
+                                                    <% end %>
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"4")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <% receita_extra.clear %>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="ementa-refeicao">
+                                                <%= content_tag :div, { :class => (session["a_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                                    <div class="ementa-nome-container">
+                                                        <span class="tc">
+                                                            <div class="nome">Jantar</div>
+                                                        </span>
+                                                    </div>
+                                                <% end %>
+                                                <div class="ementa-refeicao-container">
+                                                    <% receita_extra = EmentaReceita.where(:ementa_id => ementa.id).where('celula LIKE ?', "%5") %>
+                                                    <% if receita_extra.length > 0 %>
+                                                    <div class="ementa-refeicao-secundaria ementa-entrada" id="5">
+                                                    <% else %>
+                                                    <div class="ementa-refeicao-secundaria ementa-entrada" style="display: none;" id="5">
+                                                    <% end %>
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"5")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <% receita_extra.clear %>
+                                                    <div class="ementa-refeicao-principal" id="6">
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"6")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    
+                                                    <% receita_extra = EmentaReceita.where(:ementa_id => ementa.id).where('celula LIKE ?', "%7") %>
+                                                    <% if receita_extra.length > 0 %>
+                                                    <div class="ementa-refeicao-secundaria ementa-sobremesa" id="7">
+                                                    <% else %>
+                                                    <div class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;" id="7">
+                                                    <% end %>
+                                                        <% i=0 %>
+                                                        <% @letter_array.each do |letter| %>
+                                                            <% receita_celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => (letter+"7")).first %>
+                                                            <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")} do %>
+                                                                <% if !receita_celula.blank? %>
+                                                                    <div class="nome-div perfil_ementa">
+                                                                        <span class="tc nome">
+                                                                            <%= link_to receita_celula.receita.nome, "receita/#{receita_celula.receita[:id]}", { :target => :blank } %>
+                                                                        </span>
+                                                                    </div>
+                                                                <% else %>
+                                                                    <div class="nome-div perfil_ementa center">
+                                                                        <span class="tc nome">
+                                                                            -
+                                                                        </span>
+                                                                    </div>
+                                                                <% end %>
+                                                            <% end %>
+                                                        <% end %>
+                                                        <div class="clearfix"></div>
+                                                    </div>
+                                                    <% receita_extra.clear %>
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ementa-info mt30">
+                                    <%= link_to("Download", "ementa_perfil/#{ementa[:id]}.pdf", { :class=>"button", :target => "_blank"}) %>
+                                    <%= link_to("Editar Ementa", "ementa_perfil/#{ementa[:id]}", { :class=>"button", :target => "_blank"}) %>
+                                    <%= link_to("Apagar Ementa", "apagar_ementa/#{ementa[:id]}", { :class=>"button"}) %>
+                                </div>
+                            <% end %>   
+                            <% if (@ementas_apagadas != nil && @ementas_apagadas != 0 && empty != 0) %>
+                                <div class="ementa-diaria-subrefeicao mt30">
+                                    <%= @ementas_apagadas == 1 ? "#{@ementas_apagadas} ementa foi removida" : "#{@ementas_apagadas} destas ementas foram removidas" %>
+                                </div>
+                            <% elsif empty == 0 %>
+                                <div class="ementa-diaria-subrefeicao mt60">
+                                    Não existem ementas a apresentar.
+                                </div>
+                            <% end %>                   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
