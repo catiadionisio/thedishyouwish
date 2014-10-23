@@ -73,7 +73,7 @@
                                     <%= l(ementa.data.to_date, format: :day_long) %>
                                 </div>
 
-                                <div class="row">
+                                <div class="row hidden-xs">
                                     <div class="col-md-12 mt30">
                                         <div class="ementa-container">
                                             <div class="ementa-semana">
@@ -337,7 +337,7 @@
 
                                 <div class="ementa-info mt30">
                                     <%= link_to("Download", "ementa_perfil/#{ementa[:id]}.pdf", { :class=>"button", :target => "_blank"}) %>
-                                    <%= link_to("Editar Ementa", "ementa_perfil/#{ementa[:id]}", { :class=>"button", :target => "_blank"}) %>
+                                    <%= link_to("Editar Ementa", "ementa_perfil/#{ementa[:id]}", { :class=>"button hidden-xs", :target => "_blank"}) %>
                                     <%= link_to("Apagar Ementa", "apagar_ementa/#{ementa[:id]}", { :class=>"button"}) %>
                                 </div>
                             <% end %>   

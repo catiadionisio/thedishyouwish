@@ -722,11 +722,11 @@ function add_nova_receita(celula, receitaid) {
                 $(".adicionar_receita").html(conteudo);
                 $(".ementa-receita").removeClass('adicionar_receita');
 
-                $('#alerta_ementa').html('<div class="alert_ementa">Não existe nenhuma receita disponível!</div>')
+                $('#alerta_ementa').html('<div class="alert_ementa alert_ementa2">Não existe nenhuma receita disponível!</div>')
 
                 setTimeout(function() {
                   $(".alert_ementa").fadeOut();
-                }, 2000);
+                }, 1900);
             }
         },
         error: function (err) {

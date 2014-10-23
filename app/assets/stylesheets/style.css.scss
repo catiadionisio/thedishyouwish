@@ -2838,6 +2838,10 @@ label {
 			font-size: 13px;
 			text-transform: uppercase;
 			text-align: left;
+
+			@media (max-width: 767px) { 
+				text-align: center;
+			}
 		}
 	}
 
@@ -2911,4 +2915,10 @@ label {
 	min-width: 100px;
 	overflow: hidden;
     z-index: 999999;
+
+    &.alert_ementa2 {
+		position: fixed;
+    	bottom: 20px;
+    	top: auto;
+    }
 }
