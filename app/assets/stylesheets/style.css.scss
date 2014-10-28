@@ -539,7 +539,7 @@ label {
 	color: $white;
 	text-transform: uppercase;
 	z-index: 998;
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	left: 0;
 	top: 0;
@@ -1651,20 +1651,6 @@ label {
 	}
 }
 
-#ementa_salva {
-	background: $blue;
-	bottom: -20px;
-    color: $white;
-    font-size: 11px;
-    left: 15px;
-    margin-top: 5px;
-    padding: 3px 5px;
-    position: absolute;
-    text-align: center;
-    text-transform: uppercase;
-    width: 300px;
-}
-
 .ementa-container {
 
 }
@@ -2018,6 +2004,10 @@ label {
 	margin-left: -5px;
 	margin-right: -5px;
 	margin-bottom: 5px;
+
+	&.titulo2 {
+		margin-top: 7px;
+	}
 }
 
 .janela-opcoes-grupo {
@@ -2337,10 +2327,6 @@ label {
 /* EMENTA DIÁRIA */
 
 #ementa-diaria {
-	#ementa_salva {
-		left: auto;
-		right: 19px;
-	}
 
 	.ementa-semana {
 		border-bottom: 0;
@@ -2900,25 +2886,24 @@ label {
 
 .alert_ementa {
 	position: absolute;
-	top: 180px;
+	top: 61px;
 	left: 0;
   	right: 0;
 	background: $red;
     color: $white;
-    font-size: 11px;
+    font-size: 13px;
     margin: 0 auto;
-    padding: 3px 5px;
+    padding: 10px 15px;
     text-align: center;
     text-transform: uppercase;
-    width:90%;
-	max-width: 500px;
+    width:100%;
 	min-width: 100px;
 	overflow: hidden;
     z-index: 999999;
+	position: fixed;
+	opacity: 0.9;
 
-    &.alert_ementa2 {
-		position: fixed;
-    	bottom: 20px;
-    	top: auto;
-    }
+	&.ementa_salva {
+		background: $blue;
+	}
 }

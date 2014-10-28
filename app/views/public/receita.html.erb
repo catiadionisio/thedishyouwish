@@ -297,7 +297,7 @@
 			<div class="row comentarios">
 				<div class="col-md-12">
 					<div class="comentarios-users">
-						<% @verReceita.comentarios.each do |p| %>
+						<% @verReceita.comentarios.order("id DESC").each do |p| %>
 							<div class="comentario">
 								<div class="comentario-foto">
 									<% if p.user_id != nil %>

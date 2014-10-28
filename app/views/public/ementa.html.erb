@@ -16,16 +16,19 @@
 						Algumas receitas não foram adicionadas devido a restrições!
 					</div>
 				<% end %>
+			</div>	
+
+			<div id="alerta_ementa">
+				<% if !session[:return_to].blank? %>
+					<% session.delete(:return_to) %>
+					<div class="alert_ementa ementa_salva">
+						A ementa foi salva com sucesso!
+					</div>
+				<% end %>
 			</div>		
 					
 			<div class="row mt30 hidden-xs">
 				<div class="col-sm-8 text-left">
-					<% if !session[:return_to].blank? %>
-						<% session.delete(:return_to) %>
-						<div id="ementa_salva">
-							A ementa foi salva com sucesso!
-						</div>
-					<% end %>
 					<% if user_signed_in? %>
 						<%= link_to (!session["ementa"].blank? ? "Actualizar Ementa" : "Guardar Ementa"), ementa_guardar_ementa_path(:day => @date, :ne => "0"), {:class=>"button"} %>
 					<% else %>
@@ -209,6 +212,15 @@
 																	<%= link_to((session[letter+"1"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
 																</div>
 															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"1" } }) %>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -341,6 +353,15 @@
 																	<%= link_to((session[letter+"2"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
 																</div>
 															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"2" } }) %>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -404,6 +425,15 @@
 																<div class="janela-opcao">
 																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
 																	<%= link_to((session[letter+"3"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+																</div>
+															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"3" } }) %>
 																</div>
 															</div>
 														</div>
@@ -473,6 +503,15 @@
 																<div class="janela-opcao">
 																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
 																	<%= link_to((session[letter+"4"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+																</div>
+															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"4" } }) %>
 																</div>
 															</div>
 														</div>
@@ -607,6 +646,15 @@
 																	<%= link_to((session[letter+"5"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
 																</div>
 															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"5" } }) %>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -670,6 +718,15 @@
 																<div class="janela-opcao">
 																	<%= image_tag 'lock.png', :alt => 'bloquear' %>
 																	<%= link_to((session[letter+"6"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+																</div>
+															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"6" } }) %>
 																</div>
 															</div>
 														</div>
@@ -741,6 +798,15 @@
 																	<%= link_to((session[letter+"7"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
 																</div>
 															</div>
+															<div class="janela-opcoes-titulo titulo2">
+																Preencher com
+															</div>
+															<div class="janela-opcoes-grupo">
+																<div class="janela-opcao">
+																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
+																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"7" } }) %>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -781,7 +847,7 @@
 
 			<div class="row visible-xs mt30">
 				<div class="col-xs-12">
-					Lamentamos mas a personalização da ementa só está disponível em dispositivos com um ecrã maior.
+					Lamentamos mas a personalização da ementa não está disponível para esta resolução.
 				</div>
 			</div>
 		
