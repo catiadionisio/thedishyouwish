@@ -41,6 +41,8 @@ Thedishyouwish::Application.routes.draw do
   get "receita_pessoas" => "public#receita_pessoas"
   get "ementa/gerar_ementa" => "public#gerar_ementa"
   get "ementa/lista_ementa" => "public#lista_ementa"
+  post "receitas_fav" => "public#receitas_fav"
+  post "receitas_all" => "public#receitas_all"
   get "ajuda" => "public#ajuda"
 
   get 'user_root' => 'perfil#perfil'

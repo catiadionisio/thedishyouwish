@@ -652,12 +652,53 @@ renderReceitas();
 
 // EMENTA -------------------------------------------------------
 
-//  EMENTA SALVA
+// MODAL
 
-setTimeout(function() {
-  $("#ementa_salva").fadeOut();
-}, 3000);
+$( document ).on( 'touchstart click', '.add_from_fav', function () {
+    "use strict";
+    var celula = $(this).data("celula");
+    $(".janela-opcoes-container").fadeOut('fast');
+    $("#receitas_fav").fadeIn('fast');
+    //$('body').addClass('oh');
+    $('#receitas_fav_submit').before(
+        $('<input/>')
+            .attr('type', 'hidden')
+            .attr('name', 'celula')
+            .attr('id', 'ementa_hidden_field')
+            .val(celula)
+    );
+});
 
+$( document ).on( 'touchstart click', '.add_from_all', function () {
+    "use strict";
+    var celula = $(this).data("celula");
+    $(".janela-opcoes-container").fadeOut('fast');
+    $("#receitas_todos").fadeIn('fast');
+    //$('body').addClass('oh');
+    $('#receitas_all_submit').before(
+        $('<input/>')
+            .attr('type', 'hidden')
+            .attr('name', 'celula')
+            .attr('id', 'ementa_hidden_field')
+            .val(celula)
+    );
+});
+
+$( document ).on( 'touchstart click', '.tdyw-close-modal', function () {
+    "use strict";
+    $(".tdyw-modal-box").fadeOut('fast');
+    $("#ementa_hidden_field").remove();
+    //$('body').removeClass('oh');
+});
+
+$( document ).on( 'touchstart click', '.alpha60', function (e) {
+    "use strict";
+    if( e.target !== this ) 
+       return;
+    $(".tdyw-modal-box").fadeOut('fast');
+    $("#ementa_hidden_field").remove();
+    //$('body').removeClass('oh'); 
+});
 
 // ERRO RESTRICOES
 
@@ -670,10 +711,12 @@ setTimeout(function() {
 $( document ).on( 'touchstart click', '.empty', function () {
     if ($(this).hasClass('empty')) {
         var celula = $(this).children(".tc").children(".add-receita").data("celula");
+        var usi = $(this).children(".tc").children(".add-receita").data("usi");
         $(this).addClass("adicionar_receita");
         console.log(celula);
+        console.log(usi);
 
-        add_nova_receita(celula, "0");
+        add_nova_receita(celula, "0", usi);
     }
 });
 
@@ -683,25 +726,38 @@ $( document ).on( 'click', '.reload', function () {
     if (!$(this).parent().parent().parent().hasClass('ementa-nome')) {
         celula = $(this).data("celula");
         receitaid = $(this).data("receitaid");
+        usi = $(this).data("usi");
         $(this).parent().parent().parent().addClass("adicionar_receita");
         console.log(celula);
+        console.log(usi);
 
-        add_nova_receita(celula, receitaid);
+        add_nova_receita(celula, receitaid, usi);
     }
 });
 
-function add_nova_receita(celula, receitaid) {
+function add_nova_receita(celula, receitaid, user_login) {
     $.ajax({
         url: "/add_ementa/",
         data: "celula="+celula+"&receitaid="+receitaid,
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
             console.log(data);
+
+            var add_from_fav_cont;
+
+            if (user_login == 1) {
+                add_from_fav_cont = '<div class="janela-opcao"><%= image_tag "icon-fav.png", :alt => "fav" %><a class="add_from_fav" href="javascript:;" data-celula="'+data[0]+'">Favoritos</a></div>'
+            } else {
+                add_from_fav_cont = ''
+            }
+
             if (data[1] != "sem_receita") {
                 var image_path = '<%= image_tag "arrow-option.png", :alt => "editar" %>';
-                var menu_ementa = '<div class="janela-opcoes-container">'+'<%= image_tag "arrow-option-up.png", :alt => "", :class => "arrow-up" %>'+'<div class="janela-opcoes-container2"><div class="janela-opcoes-titulo">Editar</div><div class="janela-opcoes-grupo"><select class="select-ementa select-novo receita-pessoas"><option value="2">2 Pessoas</option><option value="3">3 Pessoas</option><option value="4">4 Pessoas</option><option value="5">5 Pessoas</option><option value="6">6 Pessoas</option><option value="7">7 Pessoas</option><option value="8">8 Pessoas</option></select><div class="janela-opcao"><%= image_tag "lock.png", :alt => "bloquear" %><a class="bloquear" href="javascript:;" data-celula="'+data[0]+'">Bloquear</a></div></div><div class="janela-opcoes-titulo titulo2">Preencher com</div><div class="janela-opcoes-grupo"><div class="janela-opcao"><%= image_tag "icon-fav.png", :alt => "favoritos" %><a class="add_from_fav" href="javascript:;" data-celula="'+data[0]+'">Favoritos</a></div></div></div></div>';
+                var menu_ementa = '<div class="janela-opcoes-container">'+'<%= image_tag "arrow-option-up.png", :alt => "", :class => "arrow-up" %>'+'<div class="janela-opcoes-container2"><div class="janela-opcoes-titulo">Editar</div><div class="janela-opcoes-grupo"><select class="select-ementa select-novo receita-pessoas"><option value="2">2 Pessoas</option><option value="3">3 Pessoas</option><option value="4">4 Pessoas</option><option value="5">5 Pessoas</option><option value="6">6 Pessoas</option><option value="7">7 Pessoas</option><option value="8">8 Pessoas</option></select><div class="janela-opcao"><%= image_tag "lock.png", :alt => "bloquear" %><a class="bloquear" href="javascript:;" data-celula="'+data[0]+'">Bloquear</a></div></div><div class="janela-opcoes-titulo titulo2">Preencher com</div><div class="janela-opcoes-grupo">'+add_from_fav_cont+'<div class="janela-opcao"><%= image_tag "icon-all2.png", :alt => "todos" %><a class="add_from_all" href="javascript:;" data-celula="'+data[0]+'">Todos</a></div></div></div></div>';
 
-                var conteudo = "<div class='nome-div'><span class='tc nome'>"+data[1]+"</span></div><div class='opcoes-receita'><div class='icon-div'><a class='glyphter reload' href='javascript:;' data-celula='"+data[0]+"' data-receitaid='"+data[3]+"'>v</a></div><div class='icon-div'><a class='glyphter delete' href='javascript:;' data-celula='"+data[0]+"'>N</a></div></div><div class='ementa-receita-option'><a href='javascript:;' class='link-receita-option' >" + image_path + "</a></div>";
+
+
+                var conteudo = "<div class='nome-div'><span class='tc nome'>"+data[1]+"</span></div><div class='opcoes-receita'><div class='icon-div'><a class='glyphter reload' href='javascript:;' data-usi='"+user_login+"' data-celula='"+data[0]+"' data-receitaid='"+data[3]+"'>v</a></div><div class='icon-div'><a class='glyphter delete' href='javascript:;' data-celula='"+data[0]+"' data-usi='"+user_login+"'>N</a></div></div><div class='ementa-receita-option'><a href='javascript:;' class='link-receita-option' >" + image_path + "</a></div>";
 
                 if ($(".adicionar_receita").hasClass('empty')) {
                     $(".adicionar_receita").removeClass('empty');
@@ -717,7 +773,7 @@ function add_nova_receita(celula, receitaid) {
                 $(".select-novo.receita-pessoas2").children('.styledSelect').text(data[2] + " pessoas");
                 $(".select-ementa.select-novo").removeClass('select-novo');
             } else {
-                var conteudo = '<span class="tc"><span class="add-receita" data-celula="'+data[0]+'">X</span></span>';
+                var conteudo = '<span class="tc"><span class="add-receita" data-usi="'+user_login+'"data-celula="'+data[0]+'">X</span></span>';
                 $(".adicionar_receita").addClass('empty');
                 $(".adicionar_receita").html(conteudo);
                 $(".ementa-receita").removeClass('adicionar_receita');
@@ -740,9 +796,11 @@ $( document ).on( 'click', '.delete', function () {
 
     if (!$(this).parent().parent().parent().hasClass('ementa-nome')) {
         celula = $(this).data("celula");
+        usi = $(this).data("usi");
         $(this).parent().parent().parent().removeClass('lock');
         $(this).parent().parent().parent().addClass("adicionar_receita");
         console.log(celula);
+        console.log(usi);
 
         $.ajax({
             url: "/ementa_delete/",
@@ -751,7 +809,7 @@ $( document ).on( 'click', '.delete', function () {
             success: function (data) {
                 console.log(data);
 
-                var conteudo = '<span class="tc"><span class="add-receita" data-celula="'+data+'">X</span></span>';
+                var conteudo = '<span class="tc"><span class="add-receita" data-usi="'+usi+'" data-celula="'+data+'">X</span></span>';
                 $(".adicionar_receita").addClass('empty');
                 $(".adicionar_receita").html(conteudo);
                 $(".ementa-receita").removeClass('adicionar_receita');
@@ -1114,12 +1172,13 @@ $( document ).on( 'click', function (e) {
         container3 = $(".dropdown-home"),
         container4 = $(".button-dropdown-home"),
         container5 = $(".janela-gerir-conta"),
-        container6 = $(".user-options");
+        container6 = $(".user-options"),
+        container7 = $(".tdyw-modal-box");
 
 // ementa
 
-    if (!container.is(e.target) && !container2.is(e.target) // if the target of the click isn't the container...
-            && container.has(e.target).length === 0 && container2.has(e.target).length === 0) { // ... nor a descendant of the container
+    if (!container.is(e.target) && !container2.is(e.target) && !container7.is(e.target) // if the target of the click isn't the container...
+            && container.has(e.target).length === 0 && container2.has(e.target).length === 0 && container7.has(e.target).length === 0) { // ... nor a descendant of the container
         container.fadeOut('fast');
     }
 

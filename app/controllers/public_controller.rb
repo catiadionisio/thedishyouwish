@@ -89,7 +89,12 @@ class PublicController < ApplicationController
 
     def ementa
         @random_receita = Receita.first(:offset => rand(Receita.count))
-        @receitas = Receita.order("id DESC")
+        @receitas = Receita.order("nome ASC")
+
+        if user_signed_in? 
+            receitas_temp = UserReceita.where(:user_id => current_user.id).map{ |obj| obj.receita_id }
+            @receitas_fav = Receita.order("nome ASC").find(receitas_temp)
+        end
 
         if session["ementa_session"] == nil
             session["ementa_session"] = "activa"
@@ -98,6 +103,60 @@ class PublicController < ApplicationController
         if session["all"] == nil
             session["all"] = "2"
         end
+    end
+
+    def receitas_fav
+        receita = params[:receita]
+        celula = params[:celula]
+
+        session[celula] = {receita: receita}
+
+        if celula[1] == "1"
+            if session["pa_pessoas"] != nil
+                session[celula][:pessoas] = session["pa_pessoas"]
+            end
+        elsif celula[1] == "2" || celula[1] == "3" || celula[1] == "4"
+            if session["a_pessoas"] != nil
+                session[celula][:pessoas] = session["a_pessoas"]
+            end
+        elsif celula[1] == "5" || celula[1] == "6" || celula[1] == "7"
+            if session["j_pessoas"] != nil
+                session[celula][:pessoas] = session["j_pessoas"]
+            end
+        else
+            if session["all"] != nil
+                session[celula][:pessoas] = session["all"]
+            end
+        end
+
+        redirect_to ementa_path
+    end
+
+    def receitas_all
+        receita = params[:receita]
+        celula = params[:celula]
+
+        session[celula] = {receita: receita}
+
+        if celula[1] == "1"
+            if session["pa_pessoas"] != nil
+                session[celula][:pessoas] = session["pa_pessoas"]
+            end
+        elsif celula[1] == "2" || celula[1] == "3" || celula[1] == "4"
+            if session["a_pessoas"] != nil
+                session[celula][:pessoas] = session["a_pessoas"]
+            end
+        elsif celula[1] == "5" || celula[1] == "6" || celula[1] == "7"
+            if session["j_pessoas"] != nil
+                session[celula][:pessoas] = session["j_pessoas"]
+            end
+        else
+            if session["all"] != nil
+                session[celula][:pessoas] = session["all"]
+            end
+        end
+
+        redirect_to ementa_path
     end
 
     def lista_ementa

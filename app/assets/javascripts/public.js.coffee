@@ -21,3 +21,9 @@ $ ->
     placeholder_text_single: 'Ingredientes'
     no_results_text: 'Não existem resultados'
     width: 'auto'
+$ ->
+  # enable chosen js
+  $('.chosen-select4').chosen
+    placeholder_text_single: 'Receitas'
+    no_results_text: 'Não existem resultados'
+    width: 'auto'

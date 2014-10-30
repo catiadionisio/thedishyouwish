@@ -1,3 +1,51 @@
+<% if user_signed_in? %>
+	<div id="receitas_fav" class="tdyw-modal-box alpha60"> 
+	    <div class="tdyw-modal">
+	      <div class="tdyw-modal-title">
+	        Favoritos | Escolher receita
+	        <div class="close2">
+	        	<%= link_to image_tag("selected.png", :border => 0), "javascript:;", {:class => 'tdyw-close-modal'} %>
+	        </div>
+	      </div>
+	      <div class="tdyw-modal-content">
+	        <div class="mt5">
+		        <%= form_tag '/receitas_fav', :id => 'receitas_fav_form' do %>
+					<div id="chosen-restricoes" class="ingredientes-menu">
+						<%= select_tag("receita", options_from_collection_for_select(@receitas_fav, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
+					</div>
+					<div class="mt10">
+						<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_fav_submit' %>
+					</div>
+				<% end %>
+			</div>
+	      </div>
+	    </div>
+	</div> 
+<% end %>
+
+<div id="receitas_todos" class="tdyw-modal-box alpha60"> 
+    <div class="tdyw-modal">
+      <div class="tdyw-modal-title">
+        Todos | Escolher receita
+        <div class="close2">
+        	<%= link_to image_tag("selected.png", :border => 0), "javascript:;", {:class => 'tdyw-close-modal'} %>
+        </div>
+      </div>
+      <div class="tdyw-modal-content">
+        <div class="mt5">
+	        <%= form_tag '/receitas_all' do %>
+				<div id="chosen-restricoes" class="ingredientes-menu">
+					<%= select_tag("receita", options_from_collection_for_select(@receitas, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
+				</div>
+				<div class="mt10">
+					<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_all_submit' %>
+				</div>
+			<% end %>
+		</div>
+      </div>
+    </div>
+</div> 
+
 <div id="wrap">
 	<div class="conteudo-pagina">
 		<div class="container">
@@ -179,10 +227,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"1", :receitaid => session[letter+"1"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"1", :receitaid => session[letter+"1"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"1" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"1", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -216,9 +264,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"1" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"1" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"1" } }) %>
 																</div>
 															</div>
 														</div>
@@ -230,7 +284,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"1"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"1"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"1", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -320,10 +374,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"2", :receitaid => session[letter+"2"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"2", :receitaid => session[letter+"2"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"2" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"2", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -357,9 +411,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"2" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"2" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"2" } }) %>
 																</div>
 															</div>
 														</div>
@@ -371,7 +431,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"2"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"2"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"2", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -394,10 +454,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"3", :receitaid => session[letter+"3"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"3", :receitaid => session[letter+"3"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"3" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"3", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -431,9 +491,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"3" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"3" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"3" } }) %>
 																</div>
 															</div>
 														</div>
@@ -445,7 +511,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"3"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"3"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"3", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -472,10 +538,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"4", :receitaid => session[letter+"4"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"4", :receitaid => session[letter+"4"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"4" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"4", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -509,9 +575,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"4" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"4" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"4" } }) %>
 																</div>
 															</div>
 														</div>
@@ -523,7 +595,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"4"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"4"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"4", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -613,10 +685,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"5", :receitaid => session[letter+"5"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"5", :receitaid => session[letter+"5"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"5" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"5", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -650,9 +722,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"5" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"5" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"5" } }) %>
 																</div>
 															</div>
 														</div>
@@ -664,7 +742,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"5"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"5"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"5", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -687,10 +765,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"6", :receitaid => session[letter+"6"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"6", :receitaid => session[letter+"6"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"6" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"6", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -724,9 +802,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"6" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"6" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"6" } }) %>
 																</div>
 															</div>
 														</div>
@@ -738,7 +822,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"6"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"6"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"6", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
@@ -765,10 +849,10 @@
 												</div>
 												<div class="opcoes-receita">
 													<div class="icon-div">
-														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"7", :receitaid => session[letter+"7"][:receita] } }) %>
+														<%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"7", :receitaid => session[letter+"7"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 													<div class="icon-div">
-														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"7" } }) %>
+														<%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"7", :usi => (user_signed_in? ? 1 : 0) } }) %>
 													</div>
 												</div>
 												<div class="ementa-receita-option">
@@ -802,9 +886,15 @@
 																Preencher com
 															</div>
 															<div class="janela-opcoes-grupo">
+																<% if user_signed_in? %>
+																	<div class="janela-opcao">
+																		<%= image_tag 'icon-fav.png', :alt => 'fav' %>
+																		<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"7" } }) %>
+																	</div>
+																<% end %>
 																<div class="janela-opcao">
-																	<%= image_tag 'icon-fav.png', :alt => 'bloquear' %>
-																	<%= link_to("Favoritos", "javascript:;", { :class => "add_from_fav", :data => { :celula=> letter+"7" } }) %>
+																	<%= image_tag 'icon-all2.png', :alt => 'todos' %>
+																	<%= link_to("Todos", "javascript:;", { :class => "add_from_all", :data => { :celula=> letter+"7" } }) %>
 																</div>
 															</div>
 														</div>
@@ -816,7 +906,7 @@
 										<% else %>
 											<%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"7"} do %>
 												<span class="tc">
-													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"7"}} %>
+													<%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"7", :usi => (user_signed_in? ? 1 : 0)}} %>
 												</span>
 											<% end %>
 											<% i+=1 %>
