@@ -67,6 +67,13 @@ class PerfilController < ApplicationController
         @ementas = Ementa.where(:user_id => current_user.id).order("data DESC, created_at DESC")
         @editarEmenta = Ementa.find(params[:id])
         @restricoes = Restricao.where(:user_id => current_user.id).order("created_at")
+
+        @receitas_all = Receita.order("nome ASC")
+
+        if user_signed_in? 
+            receitas_temp = UserReceita.where(:user_id => current_user.id).map{ |obj| obj.receita_id }
+            @receitas_fav = Receita.order("nome ASC").find(receitas_temp)
+        end
     end
 
     def receitas_actividade

@@ -237,6 +237,10 @@ body{
 
 .clearfix { clear: both; }
 
+a {
+	color: $darkgrey;
+}
+
 a:hover, a:focus {
 	color: $darkgrey;
 	text-decoration:none;
@@ -547,7 +551,7 @@ label {
 	width: 100%;
 	left: 0;
 	top: 0;
-	z-index: 99999;
+	z-index: 1000;
 }
 
 /* NAVBAR*/
@@ -562,6 +566,7 @@ label {
 	.nav, .nav > li {
 		margin-left:30px;
 		margin-right: 0px;
+		position: relative;
 	}
 
 	.navbar-inner {
@@ -627,15 +632,37 @@ label {
 .janela-gerir-conta {
 	position: absolute;
 	display: none;
-	z-index: 999;
+	z-index: 1001;
+	right: 0px;
+	top: 100%;
+
+	.arrow-up {
+		margin-top: -5px;
+	}
 
 	a {
-		color: $darkgrey;
+		color: $darkgrey !important;
+		padding-bottom: 0 !important;
+		padding-top: 0 !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		border-bottom: 0 !important;
+		letter-spacing: 0 !important;
+		font-weight: normal !important;
+		display: block !important;
+		font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+
+		&:hover {
+			color: $blue !important;
+			border-bottom: 0 !important;
+		}
 	}
 
 	.arrow-up {
-		margin-top: -15px;
 		margin-left: 0;
+	    position: absolute;
+	    right: 5px;
+	    top: 0;
 	}
 
 }
@@ -647,7 +674,6 @@ label {
 	padding-right:10px;
 	padding-top: 5px;
 	padding-bottom: 5px;
-	margin-top: -15px;
 }
 
 .janela-gerir-opcao {

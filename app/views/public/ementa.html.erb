@@ -10,12 +10,16 @@
 	      <div class="tdyw-modal-content">
 	        <div class="mt5">
 		        <%= form_tag '/receitas_fav', :id => 'receitas_fav_form' do %>
-					<div id="chosen-restricoes" class="ingredientes-menu">
-						<%= select_tag("receita", options_from_collection_for_select(@receitas_fav, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
-					</div>
-					<div class="mt10">
-						<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_fav_submit' %>
-					</div>
+			        <% if @receitas_fav.length == 0 %>
+			        	<p>Não tens nenhuma receita nos teus favoritos.</p>
+			        <% else %>
+						<div id="chosen-restricoes" class="ingredientes-menu">
+							<%= select_tag("receita", options_from_collection_for_select(@receitas_fav, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
+						</div>
+						<div class="mt10">
+							<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_fav_submit' %>
+						</div>
+					<% end %>
 				<% end %>
 			</div>
 	      </div>
@@ -34,12 +38,16 @@
       <div class="tdyw-modal-content">
         <div class="mt5">
 	        <%= form_tag '/receitas_all' do %>
-				<div id="chosen-restricoes" class="ingredientes-menu">
-					<%= select_tag("receita", options_from_collection_for_select(@receitas, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
-				</div>
-				<div class="mt10">
-					<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_all_submit' %>
-				</div>
+	        	<% if @receitas.length == 0 %>
+			        <p>Não existem receitas disponíveis.</p>
+			    <% else %>
+					<div id="chosen-restricoes" class="ingredientes-menu">
+						<%= select_tag("receita", options_from_collection_for_select(@receitas, "id", "nome"), {:class =>'chosen-select4', :include_blank => "Receitas"} ) %>
+					</div>
+					<div class="mt10">
+						<%= submit_tag 'Adicionar', :class => 'submit-restricao', :id => 'receitas_all_submit' %>
+					</div>
+				<% end %>
 			<% end %>
 		</div>
       </div>

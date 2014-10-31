@@ -185,12 +185,6 @@ $(".user-options").click(function () {
     if ($(".janela-gerir-conta").is(':visible')) {
         $(".janela-gerir-conta").fadeOut('fast');
     } else {
-        offset = $(".user-options").offset();
-
-        $('.janela-gerir-conta').css({
-            "top": offset.top + 35,
-            "left": offset.left - ($('.janela-gerir-conta').outerWidth()/2) + ($('.user-options').outerWidth()/2)
-        });
         $(".janela-gerir-conta").fadeIn('fast');
     }
 });
