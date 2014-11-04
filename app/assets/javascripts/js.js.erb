@@ -703,6 +703,16 @@ setTimeout(function() {
 // ADICIONAR RECEITA
 
 $( document ).on( 'touchstart click', '.empty', function () {
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+    var tipo_pagina;
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_add_ementa/"
+    } else {
+        tipo_pagina = "/add_ementa/"
+    }
+
+    console.log(tipo_pagina);
     if ($(this).hasClass('empty')) {
         var celula = $(this).children(".tc").children(".add-receita").data("celula");
         var usi = $(this).children(".tc").children(".add-receita").data("usi");
@@ -710,12 +720,20 @@ $( document ).on( 'touchstart click', '.empty', function () {
         console.log(celula);
         console.log(usi);
 
-        add_nova_receita(celula, "0", usi);
+        add_nova_receita(tipo_pagina, celula, "0", usi);
     }
 });
 
 $( document ).on( 'click', '.reload', function () {
-    var celula;
+    var celula,
+        tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_add_ementa/"
+    } else {
+        tipo_pagina = "/add_ementa/"
+    }
 
     if (!$(this).parent().parent().parent().hasClass('ementa-nome')) {
         celula = $(this).data("celula");
@@ -725,13 +743,13 @@ $( document ).on( 'click', '.reload', function () {
         console.log(celula);
         console.log(usi);
 
-        add_nova_receita(celula, receitaid, usi);
+        add_nova_receita(tipo_pagina, celula, receitaid, usi);
     }
 });
 
-function add_nova_receita(celula, receitaid, user_login) {
+function add_nova_receita(tipo_pagina, celula, receitaid, user_login) {
     $.ajax({
-        url: "/add_ementa/",
+        url: tipo_pagina,
         data: "celula="+celula+"&receitaid="+receitaid,
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
@@ -796,8 +814,17 @@ $( document ).on( 'click', '.delete', function () {
         console.log(celula);
         console.log(usi);
 
+        var tipo_pagina;
+        var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+        if (tipo_pagina_t == true) {
+            tipo_pagina = "/ee_ementa_delete/"
+        } else {
+            tipo_pagina = "/ementa_delete/"
+        }
+
         $.ajax({
-            url: "/ementa_delete/",
+            url: tipo_pagina,
             data: "celula="+celula,
             contentType: 'application/json; charset=utf-8',
             success: function (data) {
@@ -834,54 +861,90 @@ $( document ).on( 'click', '.link-receita-option', function () {
 $('#entrada-a').click(function () {
     "use strict";
 
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_extras/"
+    } else {
+        tipo_pagina = "/ementa_extras/"
+    }
+
     if (this.checked) {
         $('#2').slideDown();
-        ajax_extras("entradaa", "activo");
+        ajax_extras("entradaa", "activo", tipo_pagina);
     } else {
         $('#2').slideUp();
-        ajax_extras("entradaa", "inactivo");
+        ajax_extras("entradaa", "inactivo", tipo_pagina);
     }
 });
 
 $('#sobremesa-a').click(function () {
     "use strict";
 
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_extras/"
+    } else {
+        tipo_pagina = "/ementa_extras/"
+    }
+
     if (this.checked) {
         $('#4').slideDown();
-        ajax_extras("sobremesaa", "activo");
+        ajax_extras("sobremesaa", "activo", tipo_pagina);
     } else {
         $('#4').slideUp();
-        ajax_extras("sobremesaa", "inactivo");
+        ajax_extras("sobremesaa", "inactivo", tipo_pagina);
     }
 });
 
 $('#entrada-j').click(function () {
     "use strict";
 
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_extras/"
+    } else {
+        tipo_pagina = "/ementa_extras/"
+    }
+
     if (this.checked) {
         $('#5').slideDown();
-        ajax_extras("entradaj", "activo");
+        ajax_extras("entradaj", "activo", tipo_pagina);
     } else {
         $('#5').slideUp();
-        ajax_extras("entradaj", "inactivo");
+        ajax_extras("entradaj", "inactivo", tipo_pagina);
     }
 });
 
 $('#sobremesa-j').click(function () {
     "use strict";
 
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_extras/"
+    } else {
+        tipo_pagina = "/ementa_extras/"
+    }
+
     if (this.checked) {
         $('#7').slideDown();
-        ajax_extras("sobremesaj", "activo");
+        ajax_extras("sobremesaj", "activo", tipo_pagina);
     } else {
         $('#7').slideUp();
-        ajax_extras("sobremesaj", "inactivo");
+        ajax_extras("sobremesaj", "inactivo", tipo_pagina);
     }
 });
 
-function ajax_extras(refeicao, estado) {
+function ajax_extras(refeicao, estado, tipo_pagina) {
     $.ajax({
-        url: "/ementa_extras/",
+        url: tipo_pagina,
         data: "refeicao="+refeicao+"&estado="+estado,
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
@@ -911,14 +974,24 @@ $( document ).on( 'click', '.bloquear', function () {
     "use strict";
     var celula = $(this).data("celula");
     var parent = $(this).parent().parent().parent().parent().parent().parent();
+
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_lock/"
+    } else {
+        tipo_pagina = "/ementa_lock/"
+    }
+
     if (parent.hasClass('lock')) {
         parent.removeClass('lock');
         $(this).text('Bloquear');
-        ajax_lock(celula, "unlock");
+        ajax_lock(celula, "unlock", tipo_pagina);
     } else {
         parent.addClass('lock');
         $(this).text('Desbloquear');
-        ajax_lock(celula, "lock");
+        ajax_lock(celula, "lock", tipo_pagina);
     }
 });
 
@@ -926,21 +999,31 @@ $( document ).on( 'click', '.bloquear_refeicao', function () {
     "use strict";
     var celula = $(this).data("celula");
     var parent = $(this).parent().parent().parent().parent().parent().parent();
+
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_lock/"
+    } else {
+        tipo_pagina = "/ementa_lock/"
+    }
+    
     if (parent.hasClass('lock')) {
         parent.removeClass('lock');
         $(this).text('Bloquear');
-        ajax_lock(celula, "unlock");
+        ajax_lock(celula, "unlock", tipo_pagina);
     } else {
         parent.addClass('lock');
         $(this).text('Desbloquear');
-        ajax_lock(celula, "lock");
+        ajax_lock(celula, "lock", tipo_pagina);
     }
 });
 
 
-function ajax_lock(celula, estado) {
+function ajax_lock(celula, estado, tipo_pagina) {
     $.ajax({
-        url: "/ementa_lock/",
+        url: tipo_pagina,
         data: "celula="+celula+"&estado="+estado,
         contentType: 'application/json; charset=utf-8',
         success: function (data) {

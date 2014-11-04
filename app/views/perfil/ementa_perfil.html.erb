@@ -9,7 +9,7 @@
           </div>
           <div class="tdyw-modal-content">
             <div class="mt5">
-                <%= form_tag '/receitas_fav', :id => 'receitas_fav_form' do %>
+                <%= form_tag '/ee_receitas_fav', :id => 'receitas_fav_form' do %>
                     <% if @receitas_fav.length == 0 %>
                         <p>Não tens nenhuma receita nos teus favoritos.</p>
                     <% else %>
@@ -37,7 +37,7 @@
       </div>
       <div class="tdyw-modal-content">
         <div class="mt5">
-            <%= form_tag '/receitas_all' do %>
+            <%= form_tag '/ee_receitas_all' do %>
                 <% if @receitas.length == 0 %>
                     <p>Não existem receitas disponíveis.</p>
                 <% else %>
@@ -111,13 +111,16 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
+                            <% if session["data_ementa_ee"].blank? %>
+                                <% session["data_ementa_ee"] = @editarEmenta.data.to_date %>
+                            <% end %>
                             <div class="title-perfil">Ementa de <%= l(@editarEmenta.data.to_date, format: :day_long) %></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="container mt15">
-                <% @date = !session["data_ementa"].blank? ? session["data_ementa"].to_date : Date.today %>
+            <div id="tipoementa" class="editar_ementa_perfil container mt15">
+                <% @date = !session["data_ementa_ee"].blank? ? session["data_ementa_ee"].to_date : @editarEmenta.data.to_date %>
 
                 <div id="alerta_ementa">
                     <% if !session[:erro_restricoes].blank? %>
@@ -139,12 +142,12 @@
                         
                 <div class="row mt30 hidden-xs">
                     <div class="col-sm-8 text-left">
-                        <%= link_to "Actualizar Ementa", ementa_guardar_ementa_path(:day => @date), {:class=>"button"} %>
+                        <%= link_to "Guardar alterações", ementa_guardar_ementa_path(:day => @date), {:class=>"button"} %>
                         <a href="/ementa/nova_ementa" class="button">Gerar nova ementa</a>
                         <a href="/ementa/reset" class="button">Eliminar todos</a>
                         <select class="select-ementa"  name="selectEmentaPrincipal" id="selectEmentaPrincipal">
-                            <% if !session["all"].blank? %>
-                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["all"].to_s) %>
+                            <% if !session["all_ee"].blank? %>
+                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["all_ee"].to_s) %>
                             <% else %>
                                 <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, @editarEmenta.npessoas.to_s) %>
                             <% end %>
@@ -174,7 +177,7 @@
                                     <span class="ementa-ano"><%= @date.year %></span>
                                 </div>
                                 <div class="ementa-semana-container">
-                                    <%= link_to "e", "/ementa/prev_day", {:class=>"prev-day glyphter"} %>
+                                    <%= link_to "e", "/ementa_perfil/#{@editarEmenta.id}/ee_prev_day", {:class=>"prev-day glyphter"} %>
                                     <div class="ementa-semana-dia">
                                         <div class="ementa-dia" id="a">
                                             <span class="ementa-dia-nro"><%= @date.day %></span>
@@ -212,11 +215,11 @@
                                             <!-- <%=h (@date+6).strftime("%a") %> -->
                                         </div>
                                     </div>
-                                    <%= link_to "f", "/ementa/next_day", {:class=>"next-day glyphter"} %>
+                                    <%= link_to "f", "/ementa_perfil/#{@editarEmenta.id}/ee_next_day", {:class=>"next-day glyphter"} %>
                                 </div>
                             </div>
                             <div class="ementa-refeicao">
-                                <%= content_tag :div, { :class => (session["pa_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                <%= content_tag :div, { :class => (session["pa_lock_ee"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
                                     <div class="ementa-nome-container">
                                         <span class="tc">
                                             <div class="nome">Pequeno-almoço</div>
@@ -224,7 +227,7 @@
                                     </div>
                                     <div class="opcoes-receita">
                                         <div class="icon-div">
-                                            <%= link_to("v", "add_ementa_refeicao?celula=pa", { :class => "glyphter reload" }) %>
+                                            <%= link_to("v", "/ee_add_ementa_refeicao?celula=pa", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
                                             <%= link_to("N", "ementa_delete_refeicao?celula=pa", { :class => "glyphter delete" }) %>
@@ -240,21 +243,15 @@
                                                 </div>
                                                 <div class="janela-opcoes-grupo" id="pa_pessoas">
                                                     <select class="select-ementa refeicao-pessoas">
-                                                        <% if !session["pa_pessoas"].blank? %>
-                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["pa_pessoas"].to_s) %>
+                                                        <% if !session["pa_pessoas_ee"].blank? %>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["pa_pessoas_ee"].to_s) %>
                                                         <% else %>
-                                                            <option value="2">2 Pessoas</option>
-                                                            <option value="3">3 Pessoas</option>
-                                                            <option value="4">4 Pessoas</option>
-                                                            <option value="5">5 Pessoas</option>
-                                                            <option value="6">6 Pessoas</option>
-                                                            <option value="7">7 Pessoas</option>
-                                                            <option value="8">8 Pessoas</option>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, @editarEmenta.npessoas.to_s) %>
                                                         <% end %>
                                                     </select>
                                                     <div class="janela-opcao">
                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                        <%= link_to((session["pa_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "pa_lock" } }) %>
+                                                        <%= link_to((session["pa_lock_ee"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "pa_lock" } }) %>
                                                     </div>
                                                 </div>
                                             </div>
@@ -266,19 +263,32 @@
                                         <% @letter_array = ["a","b","c", "d", "e", "f", "g"] %>
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"1"].blank? %>
-                                            <% if !session[letter+"1"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"1"][:lock] == "lock" ? " lock" : ""), :id => letter+"1"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"1"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"1")).first %>
+
+                                            <% if ((session[letter+"1_ee"].blank? && receita_celula_nro.blank?) || session[letter+"1_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"1"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"1", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"1_ee"].blank? ? (session[letter+"1_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"1"} do %>
+                                                    <% if !session[letter+"1_ee"].blank? %>
+                                                        <% if !session[letter+"1_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"1_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"1", :receitaid => session[letter+"1"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"1", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"1", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -294,21 +304,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"1"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"1"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"1_ee"].blank? %>
+                                                                            <% if !session[letter+"1_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"1_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"1"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
+                                                                        <% if !session[letter+"1_ee"].blank? %>
+                                                                            <% if !session[letter+"1_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"1_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"1" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -332,14 +354,6 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"1"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"1", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
@@ -347,7 +361,7 @@
                                 <div class="clearfix"></div>
                             </div>
                             <div class="ementa-refeicao">
-                                <%= content_tag :div, { :class => (session["a_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                <%= content_tag :div, { :class => (session["a_lock_ee"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
                                     <div class="ementa-nome-container">
                                         <span class="tc">
                                             <div class="nome">Almoço</div>
@@ -355,7 +369,7 @@
                                     </div>
                                     <div class="opcoes-receita">
                                         <div class="icon-div">
-                                            <%= link_to("v", "add_ementa_refeicao?celula=a", { :class => "glyphter reload" }) %>
+                                            <%= link_to("v", "/ee_add_ementa_refeicao?celula=a", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
                                             <%= link_to("N", "ementa_delete_refeicao?celula=a", { :class => "glyphter delete" }) %>
@@ -371,32 +385,38 @@
                                                 </div>
                                                 <div class="janela-opcoes-grupo" id="a_pessoas">
                                                     <select class="select-ementa refeicao-pessoas">
-                                                        <% if !session["a_pessoas"].blank? %>
-                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["a_pessoas"].to_s) %>
+                                                        <% if !session["a_pessoas_ee"].blank? %>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["a_pessoas_ee"].to_s) %>
                                                         <% else %>
-                                                            <option value="2">2 Pessoas</option>
-                                                            <option value="3">3 Pessoas</option>
-                                                            <option value="4">4 Pessoas</option>
-                                                            <option value="5">5 Pessoas</option>
-                                                            <option value="6">6 Pessoas</option>
-                                                            <option value="7">7 Pessoas</option>
-                                                            <option value="8">8 Pessoas</option>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, @editarEmenta.npessoas.to_s) %>
                                                         <% end %>
                                                     </select>
                                                     <div class="janela-opcao">
                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                        <%= link_to((session["a_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "a_lock" } }) %>
+                                                        <%= link_to((session["a_lock_ee"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "a_lock" } }) %>
                                                     </div>
                                                 </div>
                                                 <div class="janela-opcoes-titulo titulo2">
                                                     Adicionar
                                                 </div>
                                                 <div class="janela-opcoes-grupo">
-                                                    <%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["entradaa"] == "activo" ? "activo" : "inactivo")}} do %>
+                                                    <% if session["entradaa_ee"] == "activo" %>
+                                                        <% estado_extra_ea = "activo" %>
+                                                    <% else %>
+                                                        <% estado_extra_ea = "inactivo" %>
+                                                    <% end %>
+                                                    <%= content_tag :div, { :class => ("janela-opcao " + estado_extra_ea), :data => { :extra=> estado_extra_ea}} do %>
                                                         <input type="checkbox" id='entrada-a' class="entrada" value="entrada">
                                                         <label for="entrada-a">Entrada</label>
                                                     <% end %>
-                                                    <%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["sobremesaa"] == "activo" ? "activo" : "inactivo")}} do %>
+
+                                                    
+                                                    <% if session["sobremesaa_ee"] == "activo" %>
+                                                        <% estado_extra_sa = "activo" %>
+                                                    <% else %>
+                                                        <% estado_extra_sa = "inactivo" %>
+                                                    <% end %>
+                                                    <%= content_tag :div, { :class => ("janela-opcao " + estado_extra_sa), :data => { :extra=> estado_extra_sa}} do %>
                                                         <input type="checkbox" id='sobremesa-a' class="sobremesa" value="sobremesa">
                                                         <label for="sobremesa-a">Sobremesa</label>
                                                     <% end %>
@@ -406,26 +426,39 @@
                                     </div>
                                 <% end %>
                                 <div class="ementa-refeicao-container">
-                                    <% if session["entradaa"] == "activo" %>
+                                    <% if session["entradaa_ee"] == "activo" %>
                                     <div class="ementa-refeicao-secundaria ementa-entrada" id="2">
                                     <% else %>
                                     <div class="ementa-refeicao-secundaria ementa-entrada" style="display: none;" id="2">
                                     <% end %>
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"2"].blank?%>
-                                            <% if !session[letter+"2"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"2"][:lock] == "lock" ? " lock" : ""), :id => letter+"2"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"2"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"2")).first %>
+
+                                            <% if ((session[letter+"2_ee"].blank? && receita_celula_nro.blank?) || session[letter+"2_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"2"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"2", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"2_ee"].blank? ? (session[letter+"2_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"2"} do %>
+                                                    <% if !session[letter+"2_ee"].blank? %>
+                                                        <% if !session[letter+"2_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"2_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"2", :receitaid => session[letter+"2"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"2", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"2", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -441,21 +474,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"2"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"2"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"2_ee"].blank? %>
+                                                                            <% if !session[letter+"2_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"2_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"2"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
+                                                                        <% if !session[letter+"2_ee"].blank? %>
+                                                                            <% if !session[letter+"2_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"2_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"2" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -479,33 +524,38 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"2"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"2", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
                                     <div class="ementa-refeicao-principal" id="3">
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"3"].blank? %>
-                                            <% if !session[letter+"3"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"3"][:lock] == "lock" ? " lock" : ""), :id => letter+"3"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"3"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"3")).first %>
+
+                                            <% if ((session[letter+"3_ee"].blank? && receita_celula_nro.blank?) || session[letter+"3_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"3"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"3", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"3_ee"].blank? ? (session[letter+"3_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"3"} do %>
+                                                    <% if !session[letter+"3_ee"].blank? %>
+                                                        <% if !session[letter+"3_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"3_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"3", :receitaid => session[letter+"3"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"3", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"3", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -521,21 +571,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"3"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"3"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"3_ee"].blank? %>
+                                                                            <% if !session[letter+"3_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"3_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"3"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+                                                                        <% if !session[letter+"3_ee"].blank? %>
+                                                                            <% if !session[letter+"3_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"3_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"3" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -559,37 +621,42 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"3"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"3", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
-                                    <% if session["sobremesaa"] == "activo" %>
+                                    <% if session["sobremesaa_ee"] == "activo" %>
                                     <div class="ementa-refeicao-secundaria ementa-sobremesa" id="4">
                                     <% else %>
                                     <div class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;" id="4">
                                     <% end %>
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"4"].blank? %>
-                                            <% if !session[letter+"4"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"4"][:lock] == "lock" ? " lock" : ""), :id => letter+"4"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"4"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"4")).first %>
+
+                                            <% if ((session[letter+"4_ee"].blank? && receita_celula_nro.blank?) || session[letter+"4_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"4"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"4", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"4_ee"].blank? ? (session[letter+"4_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"4"} do %>
+                                                    <% if !session[letter+"4_ee"].blank? %>
+                                                        <% if !session[letter+"4_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"4_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"4", :receitaid => session[letter+"4"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"4", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"4", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -605,21 +672,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"4"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"4"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"4_ee"].blank? %>
+                                                                            <% if !session[letter+"4_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"4_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"4"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+                                                                        <% if !session[letter+"4_ee"].blank? %>
+                                                                            <% if !session[letter+"4_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"4_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"4" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -643,14 +722,6 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"4"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"4", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
@@ -658,7 +729,7 @@
                                 <div class="clearfix"></div>
                             </div>
                             <div class="ementa-refeicao">
-                                <%= content_tag :div, { :class => (session["j_lock"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
+                                <%= content_tag :div, { :class => (session["j_lock_ee"] == "lock" ? "ementa-nome lock" : "ementa-nome")} do %>
                                     <div class="ementa-nome-container">
                                         <span class="tc">
                                             <div class="nome">Jantar</div>
@@ -666,7 +737,7 @@
                                     </div>
                                     <div class="opcoes-receita">
                                         <div class="icon-div">
-                                            <%= link_to("v", "add_ementa_refeicao?celula=j", { :class => "glyphter reload" }) %>
+                                            <%= link_to("v", "/ee_add_ementa_refeicao?celula=j", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
                                             <%= link_to("N", "ementa_delete_refeicao?celula=j", { :class => "glyphter delete" }) %>
@@ -682,32 +753,38 @@
                                                 </div>
                                                 <div class="janela-opcoes-grupo" id="j_pessoas">
                                                     <select class="select-ementa refeicao-pessoas">
-                                                        <% if !session["j_pessoas"].blank? %>
-                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["j_pessoas"].to_s) %>
+                                                        <% if !session["j_pessoas_ee"].blank? %>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["j_pessoas_ee"].to_s) %>
                                                         <% else %>
-                                                            <option value="2">2 Pessoas</option>
-                                                            <option value="3">3 Pessoas</option>
-                                                            <option value="4">4 Pessoas</option>
-                                                            <option value="5">5 Pessoas</option>
-                                                            <option value="6">6 Pessoas</option>
-                                                            <option value="7">7 Pessoas</option>
-                                                            <option value="8">8 Pessoas</option>
+                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, @editarEmenta.npessoas.to_s) %>
                                                         <% end %>
                                                     </select>
                                                     <div class="janela-opcao">
                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                        <%= link_to((session["j_lock"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "j_lock" } }) %>
+                                                        <%= link_to((session["j_lock_ee"] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear_refeicao", :data => { :celula=> "j_lock" } }) %>
                                                     </div>
                                                 </div>
                                                 <div class="janela-opcoes-titulo titulo2">
                                                     Adicionar
                                                 </div>
                                                 <div class="janela-opcoes-grupo">
-                                                    <%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["entradaj"] == "activo" ? "activo" : "inactivo")}} do %>
+                                                    <% if session["entradaj_ee"] == "activo" %>
+                                                        <% estado_extra_ej = "activo" %>
+                                                    <% else %>
+                                                        <% estado_extra_ej = "inactivo" %>
+                                                    <% end %>
+                                                    <%= content_tag :div, { :class => ("janela-opcao " + estado_extra_ej), :data => { :extra=> estado_extra_ej}} do %>
                                                         <input type="checkbox" id='entrada-j' class="entrada" value="entrada">
                                                         <label for="entrada-j">Entrada</label>
                                                     <% end %>
-                                                    <%= content_tag :div, { :class => "janela-opcao", :data => { :extra=> (session["sobremesaj"] == "activo" ? "activo" : "inactivo")}} do %>
+
+                                                
+                                                    <% if session["sobremesaj_ee"] == "activo" %>
+                                                        <% estado_extra_sj = "activo" %>
+                                                    <% else %>
+                                                        <% estado_extra_sj = "inactivo" %>
+                                                    <% end %>
+                                                    <%= content_tag :div, { :class => ("janela-opcao " + estado_extra_sj), :data => { :extra=> estado_extra_sj}} do %>
                                                         <input type="checkbox" id='sobremesa-j' class="sobremesa" value="sobremesa">
                                                         <label for="sobremesa-j">Sobremesa</label>
                                                     <% end %>
@@ -717,26 +794,39 @@
                                     </div>
                                 <% end %>
                                 <div class="ementa-refeicao-container">
-                                    <% if session["entradaj"] == "activo" %>
+                                    <% if session["entradaj_ee"] == "activo" %>
                                     <div id="5" class="ementa-refeicao-secundaria ementa-entrada">
                                     <% else %>
                                     <div id="5" class="ementa-refeicao-secundaria ementa-entrada" style="display: none;">
                                     <% end %>
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"5"].blank? %>
-                                            <% if !session[letter+"5"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"5"][:lock] == "lock" ? " lock" : ""), :id => letter+"5"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"5"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"5")).first %>
+
+                                            <% if ((session[letter+"5_ee"].blank? && receita_celula_nro.blank?) || session[letter+"5_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"5"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"5", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"5_ee"].blank? ? (session[letter+"5_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"5"} do %>
+                                                    <% if !session[letter+"5_ee"].blank? %>
+                                                        <% if !session[letter+"5_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"5_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"5", :receitaid => session[letter+"5"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"5", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"5", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -752,21 +842,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"5"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"5"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"5_ee"].blank? %>
+                                                                            <% if !session[letter+"5_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"5_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"5"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
+                                                                        <% if !session[letter+"5_ee"].blank? %>
+                                                                            <% if !session[letter+"5_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"5_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"5" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -790,33 +892,38 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"5"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"5", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
                                     <div id="6" class="ementa-refeicao-principal">
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"6"].blank? %>
-                                            <% if !session[letter+"6"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"6"][:lock] == "lock" ? " lock" : ""), :id => letter+"6"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"6"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"6")).first %>
+
+                                            <% if ((session[letter+"6_ee"].blank? && receita_celula_nro.blank?) || session[letter+"6_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"6"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"6", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"6_ee"].blank? ? (session[letter+"6_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"6"} do %>
+                                                    <% if !session[letter+"6_ee"].blank? %>
+                                                        <% if !session[letter+"6_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"6_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"6", :receitaid => session[letter+"6"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"6", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"6", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -832,21 +939,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"6"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"6"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"6_ee"].blank? %>
+                                                                            <% if !session[letter+"6_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"6_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"6"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+                                                                        <% if !session[letter+"6_ee"].blank? %>
+                                                                            <% if !session[letter+"6_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"6_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"6" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -870,37 +989,42 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"6"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"6", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
-                                    <% if session["sobremesaj"] == "activo" %>
+                                    <% if session["sobremesaj_ee"] == "activo" %>
                                     <div id="7" class="ementa-refeicao-secundaria ementa-sobremesa">
                                     <% else %>
                                     <div id="7" class="ementa-refeicao-secundaria ementa-sobremesa" style="display: none;">
                                     <% end %>
                                         <% i=0 %>
                                         <% @letter_array.each do |letter| %>
-                                            <% if !session[letter+"7"].blank? %>
-                                            <% if !session[letter+"7"][:receita].blank? %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(session[letter+"7"][:lock] == "lock" ? " lock" : ""), :id => letter+"7"} do %>
-                                                    <% receita_ementa = Receita.find(session[letter+"7"][:receita]) %>
+                                            <% receita_celula_nro = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (letter+"7")).first %>
+
+                                            <% if ((session[letter+"7_ee"].blank? && receita_celula_nro.blank?) || session[letter+"7_ee_empty"] == 1)  %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"7"} do %>
+                                                    <span class="tc">
+                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"7", :usi => (user_signed_in? ? 1 : 0) }} %>
+                                                    </span>
+                                                <% end %>
+                                                <% i+=1 %>
+                                            <% else %>
+                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita last" : "ementa-receita")+(!session[letter+"7_ee"].blank? ? (session[letter+"7_ee"][:lock] == "lock" ? " lock" : "") : ""), :id => letter+"7"} do %>
+                                                    <% if !session[letter+"7_ee"].blank? %>
+                                                        <% if !session[letter+"7_ee"][:receita].blank? %>
+                                                            <% receita_celula = Receita.find(session[letter+"7_ee"][:receita]) %>
+                                                        <% end %>
+                                                    <% else %>
+                                                        <% receita_celula = Receita.find(receita_celula_nro.receita_id) %>
+                                                    <% end %>
                                                     <div class="nome-div">
                                                         <span class="tc nome">
-                                                            
-                                                            <%= link_to receita_ementa[:nome], "receita/#{receita_ementa[:id]}", { :target => :blank } %>
+                                                            <%= link_to receita_celula.nome, "receita/#{receita_celula[:id]}", { :target => :blank } %>
                                                         </span>
                                                     </div>
                                                     <div class="opcoes-receita">
                                                         <div class="icon-div">
-                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"7", :receitaid => session[letter+"7"][:receita], :usi => (user_signed_in? ? 1 : 0) } }) %>
+                                                            <%= link_to("v", "javascript:;", { :class => "glyphter reload", :data => { :celula=> letter+"7", :receitaid => receita_celula.id, :usi => (user_signed_in? ? 1 : 0) } }) %>
                                                         </div>
                                                         <div class="icon-div">
                                                             <%= link_to("N", "javascript:;", { :class => "glyphter delete", :data => { :celula=> letter+"7", :usi => (user_signed_in? ? 1 : 0) } }) %>
@@ -916,21 +1040,33 @@
                                                                 </div>
                                                                 <div class="janela-opcoes-grupo">
                                                                     <select class="select-ementa receita-pessoas">
-                                                                        <% if !session[letter+"7"][:pessoas].blank? %>
-                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"7"][:pessoas].to_s) %>
+                                                                        <% if !session[letter+"7_ee"].blank? %>
+                                                                            <% if !session[letter+"7_ee"][:pessoas].blank? %>
+                                                                                <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session[letter+"7_ee"][:pessoas].to_s) %>
+                                                                            <% else %>
+                                                                                <option value="2">2 Pessoas</option>
+                                                                                <option value="3">3 Pessoas</option>
+                                                                                <option value="4">4 Pessoas</option>
+                                                                                <option value="5">5 Pessoas</option>
+                                                                                <option value="6">6 Pessoas</option>
+                                                                                <option value="7">7 Pessoas</option>
+                                                                                <option value="8">8 Pessoas</option>
+                                                                            <% end %>
                                                                         <% else %>
-                                                                            <option value="2">2 Pessoas</option>
-                                                                            <option value="3">3 Pessoas</option>
-                                                                            <option value="4">4 Pessoas</option>
-                                                                            <option value="5">5 Pessoas</option>
-                                                                            <option value="6">6 Pessoas</option>
-                                                                            <option value="7">7 Pessoas</option>
-                                                                            <option value="8">8 Pessoas</option>
+                                                                            <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, receita_celula_nro.npessoas.to_s) %>
                                                                         <% end %>
                                                                     </select>
                                                                     <div class="janela-opcao">
                                                                         <%= image_tag 'lock.png', :alt => 'bloquear' %>
-                                                                        <%= link_to((session[letter+"7"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
+                                                                        <% if !session[letter+"7_ee"].blank? %>
+                                                                            <% if !session[letter+"7_ee"][:lock].blank? %>
+                                                                                <%= link_to((session[letter+"7_ee"][:lock] == "lock" ? "Desbloquear" : "Bloquear"), "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
+                                                                            <% else %>
+                                                                                <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
+                                                                            <% end %>
+                                                                        <% else %>
+                                                                            <%= link_to("Bloquear", "javascript:;", { :class => "bloquear", :data => { :celula=> letter+"7" } }) %>
+                                                                        <% end %>
                                                                     </div>
                                                                 </div>
                                                                 <div class="janela-opcoes-titulo titulo2">
@@ -954,14 +1090,6 @@
                                                 <% end %>
                                                 <% i+=1 %>
                                             <% end %>
-                                            <% else %>
-                                                <%= content_tag :div, { :class => (letter == "g" ? "ementa-receita empty last" : "ementa-receita empty"), :id => letter+"7"} do %>
-                                                    <span class="tc">
-                                                        <%= content_tag :span, "X", { :class => "add-receita", :data => { :celula=> letter+"7", :usi => (user_signed_in? ? 1 : 0)}} %>
-                                                    </span>
-                                                <% end %>
-                                                <% i+=1 %>
-                                            <% end %>
                                         <% end %>
                                         <div class="clearfix"></div>
                                     </div>
@@ -969,13 +1097,6 @@
                                 <div class="clearfix"></div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row hidden-xs">
-                    <div class="col-md-12 mt60 text-left">
-                        <%= link_to("Download", request.fullpath+".pdf", { :class=>"button", :target => "_blank"}) %>
-                        <%= link_to("Lista de compras", "ementa/lista_ementa.pdf", { :class=>"button", :target => "_blank"}) %>
                     </div>
                 </div>
 

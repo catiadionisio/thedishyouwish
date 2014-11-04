@@ -45,6 +45,22 @@ Thedishyouwish::Application.routes.draw do
   post "receitas_all" => "public#receitas_all"
   get "ajuda" => "public#ajuda"
 
+  post "ee_receitas_fav" => "perfil#ee_receitas_fav"
+  post "ee_receitas_all" => "perfil#ee_receitas_all"
+  get "ee_ementa_diaria" => "perfil#ee_ementa_diaria"
+  get "ementa_perfil/:id/ee_prev_day" => "perfil#ee_prev_day"
+  get "ementa_perfil/:id/ee_next_day" => "perfil#ee_next_day"
+  get "ee_add_ementa" => "perfil#ee_add_ementa"
+  get "ee_add_ementa_refeicao" => "perfil#ee_add_ementa_refeicao"
+  get "ementa_perfil/ee_nova_ementa" => "perfil#ee_nova_ementa"
+  get "ementa_perfil/ee_reset" => "perfil#ee_reset"
+  get "ee_ementa_delete" => "perfil#ee_ementa_delete"
+  get "ee_ementa_delete_refeicao" => "perfil#ee_ementa_delete_refeicao"
+  get "ee_ementa_extras" => "perfil#ee_ementa_extras"
+  get "ee_ementa_lock" => "perfil#ee_ementa_lock"
+  get "ee_ementa_pessoas" => "perfil#ee_ementa_pessoas"
+  get "ementa_perfil/ee_guardar_ementa" => "perfil#ee_guardar_ementa"
+
   get 'user_root' => 'perfil#perfil'
 
 

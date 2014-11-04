@@ -551,7 +551,7 @@ label {
 	width: 100%;
 	left: 0;
 	top: 0;
-	z-index: 1000;
+	z-index: 1200;
 }
 
 /* NAVBAR*/
@@ -632,7 +632,6 @@ label {
 .janela-gerir-conta {
 	position: absolute;
 	display: none;
-	z-index: 1001;
 	right: 0px;
 	top: 100%;
 
@@ -2930,7 +2929,7 @@ label {
     width:100%;
 	min-width: 100px;
 	overflow: hidden;
-    z-index: 999999;
+    z-index: 1000;
 	position: fixed;
 	opacity: 0.9;
 
