@@ -1,0 +1,312 @@
+<div id="wrap">
+    <div class="conteudo-pagina perfil">
+        <div class="top-perfil">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="foto-perfil">
+                            <% if (current_user.photo.exists?) %>
+                                <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                            <% else %>
+                                <% if (current_user.provider == "facebook") %>
+                                    <%= image_tag current_user.mediumFacebookImage, :alt => 'Foto', :class => 'img-responsive' %>
+                                <% else %>
+                                    <%= image_tag current_user.photo.url(:medium), :alt => 'Foto', :class => 'img-responsive' %>
+                                <% end %>
+                            <% end %>
+                        </div>
+                        <div class="info-perfil">
+                            <div class="nome-perfil">
+                                <%= link_to current_user.nome, perfil_path %>
+                            </div>
+                            <div class="email-perfil">
+                                <%= current_user.email %>
+                            </div>
+                            <div class="dados-perfil">
+                                <% if (!current_user.sexo.empty?) %>
+                                    <div class="dados">                            
+                                        <%= image_tag current_user.sexo+'.png', :alt => current_user.sexo %>
+                                        <%= current_user.sexo.capitalize %>
+                                    </div>
+                                <% end %>
+                                <% if (!current_user.datanasc.blank?) %> 
+                                    <div class="dados ml">   
+                                        <%= image_tag 'age.png', :alt => 'idade' %>                     
+                                        <%= current_user.age(current_user.datanasc) %> anos
+                                    </div>
+                                <% end %>
+                                <div class="dados ml">
+                                    <%= image_tag 'edit.png', :alt => 'editar' %>
+                                    <%= link_to "Editar perfil", edit_user_registration_path %>
+                                </div>
+                            </div>
+                            <div class="guardados-perfil">
+                                <%= link_to("Receitas favoritas (#{@receitas.length})", receitas_favoritas_path, { :class => "button" }) %>
+                                <%= link_to("Ementas guardadas (#{@ementas.length})", ementas_guardadas_path, { :class => "button" }) %>
+                                <%= link_to("Restrições (#{@restricoes.length})", restricoes_path, { :class => "button" }) %>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            </div>      
+        </div>
+        <div class="bottom-perfil">
+            <div class="title-perfil-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="title-perfil">Ementas guardadas (<%= @ementas.length %>)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt30">
+            	<div class="row">
+            		<div class="col-md-12">
+            			<div class="ementa-info mt30">
+                            <%= link_to("Download", "/ementa_perfil/#{@editarEmenta[:id]}.pdf", { :class=>"button", :target => "_blank"}) %>
+                            <%= link_to("Editar Ementa", "/ementa_perfil_cs/#{@editarEmenta[:id]}", { :class=>"button hidden-xs"}) %>
+                            <%= link_to("Apagar Ementa", "/apagar_ementa/#{@editarEmenta[:id]}", { :class=>"button"}) %>
+                            <%= link_to("Vista Semanal", "/ementas_guardadas?id=#{@editarEmenta[:id]}", { :class=>"button"}) %>
+                        </div>
+            		</div>
+            	</div>
+            </div>
+
+            <div class="container" id="ementa-diaria" >
+            	<div class="row mt30">
+					<div class="col-md-12">
+						<div class="ementa-semana">
+							<div class="ementa-mes">
+								<%= l(@editarEmenta.data.to_date, format: :month_format) %>
+								<!-- <%=h @editarEmenta.data.to_date.strftime("%B") %> -->
+								<span class="ementa-ano"><%= @editarEmenta.data.to_date.year %></span>
+							</div>
+							<div class="ementa-semana-container">
+								<div class="ementa-semana-dia">
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=a" do %>
+										<%= content_tag :div, { :id => "a", :class => (@dia_ementa == "a" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= @editarEmenta.data.to_date.day %></span>
+											<%= l(@editarEmenta.data.to_date, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=b" do %>
+										<%= content_tag :div, { :id => "b", :class => (@dia_ementa == "b" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+1).day %></span>
+											<%= l(@editarEmenta.data.to_date+1, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=c" do %>
+										<%= content_tag :div, { :id => "c", :class => (@dia_ementa == "c" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+2).day %></span>
+											<%= l(@editarEmenta.data.to_date+2, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=d" do %>
+										<%= content_tag :div, { :id => "d", :class => (@dia_ementa == "d" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+3).day %></span>
+											<%= l(@editarEmenta.data.to_date+3, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=e" do %>
+										<%= content_tag :div, { :id => "e", :class => (@dia_ementa == "e" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+4).day %></span>
+											<%= l(@editarEmenta.data.to_date+4, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=f" do %>
+										<%= content_tag :div, { :id => "f", :class => (@dia_ementa == "f" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+5).day %></span>
+											<%= l(@editarEmenta.data.to_date+5, format: :day_format) %>
+										<% end %>
+									<% end %>
+									<%= link_to "/vista_diaria/#{@editarEmenta.id}/?dia_ementa=g" do %>
+										<%= content_tag :div, { :id => "g", :class => (@dia_ementa == "g" ? "ementa-dia selected" : "ementa-dia")} do %>
+											<span class="ementa-dia-nro"><%= (@editarEmenta.data.to_date+6).day %></span>
+											<%= l(@editarEmenta.data.to_date+6, format: :day_format) %>
+										<% end %>
+									<% end %>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+                <div class="row">
+					<div class="col-xs-12">
+						<div class="ementa-diaria">
+							<% @i = 1 %>
+							<% empty = 0 %>
+							<% while @i < 8  do %>
+			                	<% if @i == 1 %>
+			                		<% @nome_refeicao = "Pequeno-Almoço" %>
+			                		<% @nome_tipo_refeicao = "Refeição Principal" %>
+			                	<% elsif @i == 2 %>
+			                		<% @nome_refeicao = "Almoço" %>
+			                		<% @nome_tipo_refeicao = "Entrada" %>
+			                	<% elsif @i == 3 %>
+			                		<% @nome_refeicao = "Almoço" %>
+			                		<% @nome_tipo_refeicao = "Refeição Principal" %>
+			                	<% elsif @i == 4 %>
+			                		<% @nome_refeicao = "Almoço" %>
+			                		<% @nome_tipo_refeicao = "Sobremesa" %>
+			                	<% elsif @i == 5 %>
+			                		<% @nome_refeicao = "Jantar" %>
+			                		<% @nome_tipo_refeicao = "Entrada" %>
+			                	<% elsif @i == 6 %>
+			                		<% @nome_refeicao = "Jantar" %>
+			                		<% @nome_tipo_refeicao = "Refeição Principal" %>
+			                	<% else %>
+			                		<% @nome_refeicao = "Jantar" %>
+			                		<% @nome_tipo_refeicao = "Sobremesa" %>
+			                	<% end %>
+
+			                	<% receita_celula1 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"1")).first %>
+			                	<% receita_celula2 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"2")).first %>
+			                	<% receita_celula3 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"3")).first %>
+			                	<% receita_celula4 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"4")).first %>
+			                	<% receita_celula5 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"5")).first %>
+			                	<% receita_celula6 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"6")).first %>
+			                	<% receita_celula7 = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+"7")).first %>
+
+			                	<% if ((@i == 1 && !receita_celula1.blank?) || (@i == 2 && (!receita_celula2.blank? || !receita_celula3.blank? || !receita_celula4.blank?)) || (@i == 5 && (!receita_celula5.blank? || !receita_celula6.blank? || !receita_celula7.blank?))) %>
+				                	<div class="ementa-diaria-refeicao">
+										<%= @nome_refeicao %>
+									</div>
+								<% end %>
+
+								<% receita_celula = EmentaReceita.where(:ementa_id => @editarEmenta.id, :celula => (@dia_ementa+@i.to_s)).first %>
+
+				                <% if !receita_celula.blank? %>
+				                	<% empty += 1 %>
+				                	<% @receita_ementa_diaria = Receita.find(receita_celula.receita_id) %>
+
+									<div class="ementa-diaria-subrefeicao">
+										<%= @nome_tipo_refeicao %>
+									</div>
+
+									<div class="bloco-receita">
+										
+										<div class="col-xs-12 col-sm-5 col-lg-5 mt10">
+											<%= image_tag(@receita_ementa_diaria.imagem.url(:list), :class => 'img-responsive', alt: @receita_ementa_diaria[:nome]) %>
+
+											<div class="receita-diaria-info">
+												<div class="actions">
+													<div class="icon">
+														<div class="icon-div">
+															<%= link_to("s", "/receita/"+@receita_ementa_diaria[:id].to_s+".pdf", { :class=>"glyphter", :target => "_blank"}) %>
+															<div class="label-icon">Download</div>
+														</div>
+
+														<div class="icon-div">
+															<% if user_signed_in? %>
+																<% if fav = UserReceita.where(:user_id => current_user.id, :receita_id => @receita_ementa_diaria[:id]).first %>
+																	<%= link_to("i", "javascript:;", { :class => "glyphter fav-button fav-blue", :data => { :receitaid=> @receita_ementa_diaria[:id] } }) %>
+																<% else %>
+																	<%= link_to("i", "javascript:;", { :class => "glyphter fav-button", :data => { :receitaid=> @receita_ementa_diaria[:id] } }) %>
+																<% end %>
+																<div class="label-icon">Favorito</div>
+															<% else %>
+																<%= link_to("i", new_user_session_path, { :class => "glyphter fav-button" }) %>
+																<div class="label-icon">Favorito</div>
+															<% end %>
+														</div>
+
+													</div>
+													<div class="icon-div">
+														<%= content_tag :div, {class: "rating-receita"} do %>
+															<% if @receita_ementa_diaria.ratings.length > 0 %>
+																<% average = @receita_ementa_diaria.average_rating %>
+															<% else %>
+																<% average = 0 %>
+															<% end %>
+
+
+															<% if average < 0.5 %>
+																<%= image_tag 'star0.png', :alt => 'Rating' %>
+															<% elsif average < 1.5 %>
+																<%= image_tag 'star1.png', :alt => 'Rating' %>
+															<% elsif average < 2.5 %>
+																<%= image_tag 'star2.png', :alt => 'Rating' %>
+															<% elsif average < 3.5 %>
+																<%= image_tag 'star3.png', :alt => 'Rating' %>
+															<% elsif average < 4.5 %>
+																<%= image_tag 'star4.png', :alt => 'Rating' %>
+															<% else %>
+																<%= image_tag 'star5.png', :alt => 'Rating' %>
+															<% end %>
+														<% end %>
+														<div class="label-icon">Rating</div>
+													</div>
+													<div class="thanks-voting thanks-fav">
+														Adicionado aos favoritos!
+													</div>
+													<div class="thanks-voting thanks-fav-remove">
+														Removido dos favoritos!
+													</div>
+												</div>
+												<div class="receita-diaria-buttons">
+													<%= link_to("Ver receita", "/receita/#{@receita_ementa_diaria.id}", { :class => "button", :target => "_blank" }) %>
+												</div>	
+												<div style="clear: both;"></div>	
+											</div>							
+					            	   	</div>
+					            	   	<div class="col-xs-12 col-sm-7 col-lg-7 mt10">
+											<div class="nome-receita-diaria"> <%= @receita_ementa_diaria.nome %> </div>
+											<div class="pessoas-receita-diaria"> (<%= receita_celula.npessoas %> pessoas) </div>
+					            	   		<div class="info-nutricional">
+												<div class="info-block">
+													<%= image_tag 'clock.png', :alt => 'Tempo' %>
+													<div class="tempo"><%= @receita_ementa_diaria[:tempo] %> min</div>
+												</div>
+												
+												<div class="info-block">
+													<%= image_tag 'tabela.png', :alt => 'Tempo' %>
+													<div class="titulo-info">Valores nutricionais <span class="small">(V.D.R)</span></div>
+												</div>
+
+												<ol class="info-valores">
+													<% if @receita_ementa_diaria.calorias %>
+														<li><%= @receita_ementa_diaria[:calorias] %> <span class="info-title">Kcal</span></li>
+													<% end %>
+
+													<% if @receita_ementa_diaria.hidratos %>
+														<li><%= @receita_ementa_diaria[:hidratos] %>g <span class="info-title">Hidratos de carbono</span></li>
+													<% end %>
+
+													<% if @receita_ementa_diaria.gorduras %>
+														<li><%= @receita_ementa_diaria[:gorduras] %>g <span class="info-title">Gorduras</span></li>
+													<% end %>
+
+													<% if @receita_ementa_diaria.proteinas %>
+														<li><%= @receita_ementa_diaria[:proteinas] %>g <span class="info-title">Proteínas</span></li>
+													<% end %>
+
+													<% if @receita_ementa_diaria.acucar %>
+														<li><%= @receita_ementa_diaria[:acucar] %>g <span class="info-title">Açúcares</span></li>
+													<% end %>
+												</ol>
+											</div>
+
+											<p class="sub-diaria">
+												<%= @receita_ementa_diaria[:descricao] %>
+											</p>
+											
+					            	   	</div>
+				            	   	</div>
+				                <% end %>
+				                <% @i +=1 %>
+				            <% end %>	
+				            <% if empty == 0 %>
+			            		<div class="ementa-diaria-subrefeicao mt60">
+									Não existem receitas a apresentar para este dia.
+								</div>
+				            <% end %>					
+		               	</div>
+		            </div>
+
+				</div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -16,7 +16,9 @@ Thedishyouwish::Application.routes.draw do
   get "receitas_favoritas" => "perfil#receitas"
   get "ementas_guardadas" => "perfil#ementas"
   get "ementa_perfil/:id" => "perfil#ementa_perfil"
+  get "ementa_perfil_cs/:id" => "perfil#ementa_perfil_cs"
   get "apagar_ementa/:id" => "perfil#apagar_ementa"
+  get "vista_diaria/:id" => "perfil#vista_diaria"
   get "receitas_actividade" => "perfil#receitas_actividade"
   get "restricoes" => "perfil#restricoes"
   post "add_restricao" => "perfil#add_restricao"
@@ -52,14 +54,14 @@ Thedishyouwish::Application.routes.draw do
   get "ementa_perfil/:id/ee_next_day" => "perfil#ee_next_day"
   get "ee_add_ementa" => "perfil#ee_add_ementa"
   get "ee_add_ementa_refeicao" => "perfil#ee_add_ementa_refeicao"
-  get "ementa_perfil/ee_nova_ementa" => "perfil#ee_nova_ementa"
-  get "ementa_perfil/ee_reset" => "perfil#ee_reset"
+  get "ementa_perfil/:id/ee_nova_ementa" => "perfil#ee_nova_ementa"
+  get "ementa_perfil/:id/ee_reset" => "perfil#ee_reset"
   get "ee_ementa_delete" => "perfil#ee_ementa_delete"
   get "ee_ementa_delete_refeicao" => "perfil#ee_ementa_delete_refeicao"
   get "ee_ementa_extras" => "perfil#ee_ementa_extras"
   get "ee_ementa_lock" => "perfil#ee_ementa_lock"
   get "ee_ementa_pessoas" => "perfil#ee_ementa_pessoas"
-  get "ementa_perfil/ee_guardar_ementa" => "perfil#ee_guardar_ementa"
+  get "ee_guardar_ementa" => "perfil#ee_guardar_ementa"
 
   get 'user_root' => 'perfil#perfil'
 

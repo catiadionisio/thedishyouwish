@@ -337,8 +337,9 @@
 
                                 <div class="ementa-info mt30">
                                     <%= link_to("Download", "ementa_perfil/#{ementa[:id]}.pdf", { :class=>"button", :target => "_blank"}) %>
-                                    <%= link_to("Editar Ementa", "ementa_perfil/#{ementa[:id]}", { :class=>"button hidden-xs"}) %>
+                                    <%= link_to("Editar Ementa", "ementa_perfil_cs/#{ementa[:id]}", { :class=>"button hidden-xs"}) %>
                                     <%= link_to("Apagar Ementa", "apagar_ementa/#{ementa[:id]}", { :class=>"button"}) %>
+                                    <%= link_to("Vista Diária", "vista_diaria/#{ementa[:id]}", { :class=>"button"}) %>
                                 </div>
                             <% end %>   
                             <% if (@ementas_apagadas != nil && @ementas_apagadas != 0 && empty != 0) %>

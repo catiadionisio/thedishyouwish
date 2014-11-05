@@ -62,6 +62,43 @@ class PerfilController < ApplicationController
         @restricoes = Restricao.where(:user_id => current_user.id).order("created_at")
     end
 
+    def ementa_perfil_cs
+        idementa = params[:id]
+
+        @letter_array = ["a","b","c", "d", "e", "f", "g"]
+        @letter_array.each do |letter|
+            session[letter+"1_ee"] = nil
+            session[letter+"1_ee_empty"] = nil
+        end
+
+        @letter_array = ["a","b","c", "d", "e", "f", "g"]
+        @i = 1
+
+        @letter_array.each do |letter|
+            while @i < 8  do
+                session[letter+@i.to_s+"_ee"] = nil
+                session[letter+@i.to_s+"_ee_empty"] = nil
+                @i +=1
+            end
+            @i = 1
+        end
+
+        session["data_ementa_ee"] = nil
+        session["all_ee"] = nil
+        session["pa_lock_ee"] = nil
+        session["pa_pessoas_ee"] = nil
+        session["a_lock_ee"] = nil
+        session["a_pessoas_ee"] = nil
+        session["entradaa_ee"] = nil
+        session["sobremesaa_ee"] = nil
+        session["j_lock_ee"] = nil
+        session["j_pessoas_ee"] = nil
+        session["entradaj_ee"] = nil
+        session["sobremesaj_ee"] = nil
+
+        redirect_to "/ementa_perfil/#{idementa}"
+    end
+
     def ementa_perfil
         @receitas = UserReceita.where(:user_id => current_user.id).order("created_at DESC")
         @ementas = Ementa.where(:user_id => current_user.id).order("data DESC, created_at DESC")
@@ -69,6 +106,16 @@ class PerfilController < ApplicationController
         @restricoes = Restricao.where(:user_id => current_user.id).order("created_at")
 
         @receitas_all = Receita.order("nome ASC")
+
+        celulasEmenta = EmentaReceita.where(:ementa_id => @editarEmenta.id)
+
+        celulasEmenta.each do |cell|
+            if (session[cell.celula+"_ee"].blank?)
+                session[cell.celula+"_ee"] = {receita: cell.receita_id}
+                session[cell.celula+"_ee"][:pessoas] = cell.npessoas
+            end
+        end
+
 
         if user_signed_in? 
             receitas_temp = UserReceita.where(:user_id => current_user.id).map{ |obj| obj.receita_id }
@@ -131,6 +178,18 @@ class PerfilController < ApplicationController
         ementa.destroy
 
         redirect_to perfil_path
+    end
+
+
+    def vista_diaria
+        @receitas = UserReceita.where(:user_id => current_user.id).order("created_at DESC")
+        @ementas = Ementa.where(:user_id => current_user.id).order("data DESC, created_at DESC")
+        
+        @restricoes = Restricao.where(:user_id => current_user.id).order("created_at")
+        @receitas_all = Receita.order("nome ASC")
+
+        @editarEmenta = Ementa.find(params[:id])
+        @dia_ementa = params[:dia_ementa] ? params[:dia_ementa] : "a"
     end
 
     def restricoes
@@ -223,16 +282,6 @@ class PerfilController < ApplicationController
         end
 
         redirect_to session.delete(:return_to)
-    end
-
-    #FALTA FAZER
-
-    def ee_ementa_diaria
-        if session["data_ementa_ee"] == nil
-            session["data_ementa_ee"] = Date.today
-        end
-
-        @dia_ementa = params[:dia_ementa] ? params[:dia_ementa] : "a"
     end
 
     def ee_prev_day
@@ -682,21 +731,23 @@ class PerfilController < ApplicationController
 
         @letter_array.each do |letter|
             while @i < 8  do
-                if !session[letter+@i.to_s].blank?
-                    if session[letter+@i.to_s][:lock] != "lock"
-                        session[letter+@i.to_s] = nil
+                if !session[letter+@i.to_s + "_ee"].blank?
+                    if session[letter+@i.to_s + "_ee"][:lock] != "lock"
+                        session[letter+@i.to_s + "_ee"] = nil
+                        session[letter+@i.to_s + "_ee_empty"] = 1
                     end
                 else
-                    session[letter+@i.to_s] = nil
+                    session[letter+@i.to_s + "_ee"] = nil
+                    session[letter+@i.to_s + "_ee_empty"] = 1
                 end
                 @i +=1
             end
             @i = 1
         end
 
-        session["pa_pessoas"] = session["all"]
-        session["a_pessoas"] = session["all"]
-        session["j_pessoas"] = session["all"]
+        session["pa_pessoas_ee"] = session["all_ee"]
+        session["a_pessoas_ee"] = session["all_ee"]
+        session["j_pessoas_ee"] = session["all_ee"]
 
         redirect_to session.delete(:return_to)
     end
@@ -717,12 +768,14 @@ class PerfilController < ApplicationController
 
         if celula == "pa"
             @letter_array.each do |letter|
-                if !session[letter+1.to_s].blank?
-                    if session[letter+1.to_s][:lock] != "lock"
-                        session[letter+1.to_s] = nil
+                if !session[letter + "1_ee"].blank?
+                    if session[letter + "1_ee"][:lock] != "lock"
+                        session[letter + "1_ee"] = nil
+                        session[letter+"1_ee_empty"] = 1
                     end
                 else
-                    session[letter+1.to_s] = nil
+                    session[letter + "1_ee"] = nil
+                    session[letter+"1_ee_empty"] = 1
                 end
             end
         elsif celula == "a"
@@ -730,12 +783,14 @@ class PerfilController < ApplicationController
 
             @letter_array.each do |letter|
                 while @i < 5  do                   
-                    if !session[letter+@i.to_s].blank?
-                        if session[letter+@i.to_s][:lock] != "lock"
-                            session[letter+@i.to_s] = nil
+                    if !session[letter+@i.to_s + "_ee"].blank?
+                        if session[letter+@i.to_s + "_ee"][:lock] != "lock"
+                            session[letter+@i.to_s + "_ee"] = nil
+                            session[letter+@i.to_s + "_ee_empty"] = 1
                         end
                     else
-                        session[letter+@i.to_s] = nil
+                        session[letter+@i.to_s + "_ee"] = nil
+                        session[letter+@i.to_s + "_ee_empty"] = 1
                     end
                     @i +=1
                 end
@@ -746,12 +801,14 @@ class PerfilController < ApplicationController
 
             @letter_array.each do |letter|
                 while @i < 8  do
-                    if !session[letter+@i.to_s].blank?
-                        if session[letter+@i.to_s][:lock] != "lock"
-                            session[letter+@i.to_s] = nil
+                    if !session[letter+@i.to_s + "_ee"].blank?
+                        if session[letter+@i.to_s + "_ee"][:lock] != "lock"
+                            session[letter+@i.to_s + "_ee"] = nil
+                            session[letter+@i.to_s + "_ee_empty"] = 1
                         end
                     else
-                        session[letter+@i.to_s] = nil
+                        session[letter+@i.to_s + "_ee"] = nil
+                        session[letter+@i.to_s + "_ee_empty"] = 1
                     end
                     @i +=1
                 end
@@ -807,8 +864,8 @@ class PerfilController < ApplicationController
         if params[:celula] == "pa_lock"
             session[params[:celula]+"_ee"] = params[:estado]
             @letter_array.each do |letter|
-                if !session[letter+"1_ee".to_s].blank?
-                    session[letter+"1_ee".to_s][:lock] = params[:estado]
+                if !session[letter+"1_ee"].blank?
+                    session[letter+"1_ee"][:lock] = params[:estado]
                 end
             end
         elsif params[:celula] == "a_lock"
@@ -817,8 +874,8 @@ class PerfilController < ApplicationController
 
             @letter_array.each do |letter|
                 while @i < 5  do                   
-                    if !session[letter+@i+"_ee".to_s].blank?
-                        session[letter+@i+"_ee".to_s][:lock] = params[:estado]
+                    if !session[letter+@i.to_s+"_ee"].blank?
+                        session[letter+@i.to_s+"_ee"][:lock] = params[:estado]
                     end
                     @i +=1
                 end
@@ -830,8 +887,8 @@ class PerfilController < ApplicationController
 
             @letter_array.each do |letter|
                 while @i < 8  do                   
-                    if !session[letter+@i+"_ee".to_s].blank?
-                        session[letter+@i+"_ee".to_s][:lock] = params[:estado]
+                    if !session[letter+@i.to_s+"_ee"].blank?
+                        session[letter+@i.to_s+"_ee"][:lock] = params[:estado]
                     end
                     @i +=1
                 end
@@ -851,102 +908,92 @@ class PerfilController < ApplicationController
         @letter_array = ["a","b","c", "d", "e", "f", "g"]
 
         if celula == "pa_pessoas"
-            session[celula] = pessoas
+            session[celula+"_ee"] = pessoas
             @letter_array.each do |letter|
-                if !session[letter+1.to_s].blank?
-                    session[letter+1.to_s][:pessoas] = pessoas
+                if !session[letter+"1_ee"].blank?
+                    session[letter+"1_ee"][:pessoas] = pessoas
                 end
             end
         elsif celula == "a_pessoas"
-            session[celula] = pessoas
+            session[celula+"_ee"] = pessoas
             @i = 2
 
             @letter_array.each do |letter|
                 while @i < 5  do                   
-                    if !session[letter+@i.to_s].blank?
-                        session[letter+@i.to_s][:pessoas] = pessoas
+                    if !session[letter+@i.to_s+"_ee"].blank?
+                        session[letter+@i.to_s+"_ee"][:pessoas] = pessoas
                     end
                     @i +=1
                 end
                 @i = 2
             end
         elsif celula == "j_pessoas"
-            session[celula] = pessoas
+            session[celula+"_ee"] = pessoas
             @i = 5
 
             @letter_array.each do |letter|
                 while @i < 8  do                   
-                    if !session[letter+@i.to_s].blank?
-                        session[letter+@i.to_s][:pessoas] = pessoas
+                    if !session[letter+@i.to_s+"_ee"].blank?
+                        session[letter+@i.to_s+"_ee"][:pessoas] = pessoas
                     end
                     @i +=1
                 end
                 @i = 5
             end  
         elsif celula == "all"
-            session[celula] = pessoas
+            session[celula+"_ee"] = pessoas
             @i = 1
 
             @letter_array.each do |letter|
                 while @i < 8  do                   
-                    if !session[letter+@i.to_s].blank?
-                        session[letter+@i.to_s][:pessoas] = pessoas
+                    if !session[letter+@i.to_s+"_ee"].blank?
+                        session[letter+@i.to_s+"_ee"][:pessoas] = pessoas
                     end
                     @i +=1
                 end
                 @i = 1
             end
-            session["pa_pessoas"] = pessoas
-            session["a_pessoas"] = pessoas
-            session["j_pessoas"] = pessoas
+            session["pa_pessoas_ee"] = pessoas
+            session["a_pessoas_ee"] = pessoas
+            session["j_pessoas_ee"] = pessoas
         else
-            session[celula][:pessoas] = pessoas
+            session[celula+"_ee"][:pessoas] = pessoas
         end
 
         render :json => [celula, pessoas]
     end
 
     def ee_guardar_ementa
-        session[:return_to] ||= request.referer
+
+        editarEmenta_id = Ementa.find(params[:id])
 
         if user_signed_in? 
 
-            if (!session["ementa"].blank? && params[:ne] == "0")
-                ementa = Ementa.where(:id => session["ementa"].to_i).first
-                ementa.user_id = current_user.id
-                ementa.data = params[:day]
-                ementa.npessoas = (session["all"] == "0") ? 2 : session["all"]
+            ementa = Ementa.where(:id => editarEmenta_id).first
+            ementa.data = params[:day]
+            ementa.npessoas = (session["all_ee"] == "0") ? 2 : session["all"]
+            ementa.save
 
-                ementa.save
-
-                actividade = Actividade.new(:user_id => current_user.id, :accao => "update", :tipo => "ementa", :tipoid => ementa.id, :created_at =>  DateTime.now.beginning_of_day.. DateTime.now.end_of_day)
-                actividade.save
-            else
-                ementa = Ementa.new(:user_id => current_user.id, :data => params[:day], :npessoas => session["all"])
-                ementa.save
-                session["ementa"] = ementa.id
-
-                actividade = Actividade.new(:user_id => current_user.id, :accao => "add", :tipo => "ementa", :tipoid => ementa.id, :created_at =>  DateTime.now.beginning_of_day.. DateTime.now.end_of_day)
-                actividade.save
-            end
+            actividade = Actividade.new(:user_id => current_user.id, :accao => "update", :tipo => "ementa", :tipoid => ementa.id, :created_at =>  DateTime.now.beginning_of_day.. DateTime.now.end_of_day)
+            actividade.save
 
             @letter_array = ["a","b","c", "d", "e", "f", "g"]
             @i = 1
 
             @letter_array.each do |letter|
                 while @i < 8  do                   
-                    if !session[letter+@i.to_s].blank?
+                    if !session[letter+@i.to_s+"_ee"].blank?
                         
-                        @pessoas_celula = (session[letter+@i.to_s][:pessoas].to_i == 0) ? 2 : session[letter+@i.to_s][:pessoas].to_i
+                        @pessoas_celula = (session[letter+@i.to_s+"_ee"][:pessoas].to_i == 0) ? 2 : session[letter+@i.to_s+"_ee"][:pessoas].to_i
 
                         if celula = EmentaReceita.where(:ementa_id => ementa.id, :celula => letter+@i.to_s).first
                             celula.ementa_id = ementa.id
                             celula.celula = letter+@i.to_s
-                            celula.receita_id = session[letter+@i.to_s][:receita].to_i
+                            celula.receita_id = session[letter+@i.to_s+"_ee"][:receita].to_i
                             celula.npessoas = @pessoas_celula
                             celula.save
                         else
-                            celula = EmentaReceita.new(:ementa_id => ementa.id, :receita_id => session[letter+@i.to_s][:receita].to_i, :npessoas => @pessoas_celula, :celula => letter+@i.to_s)
+                            celula = EmentaReceita.new(:ementa_id => ementa.id, :receita_id => session[letter+@i.to_s+"_ee"][:receita].to_i, :npessoas => @pessoas_celula, :celula => letter+@i.to_s)
                             celula.save
                         end
                     else
@@ -961,6 +1008,6 @@ class PerfilController < ApplicationController
         end
 
         #render :json => [params[:day], ementa.id]
-        redirect_to session[:return_to]
+        redirect_to "/ementas_guardadas?id=#{editarEmenta_id.id}"
     end
 end

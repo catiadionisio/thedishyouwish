@@ -141,10 +141,10 @@
                 </div>      
                         
                 <div class="row mt30 hidden-xs">
-                    <div class="col-sm-8 text-left">
-                        <%= link_to "Guardar alterações", ementa_guardar_ementa_path(:day => @date), {:class=>"button"} %>
-                        <a href="/ementa/nova_ementa" class="button">Gerar nova ementa</a>
-                        <a href="/ementa/reset" class="button">Eliminar todos</a>
+                    <div class="col-sm-12 text-left">
+                        <%= link_to "Guardar alterações",  ee_guardar_ementa_path(:day => @date, :id => @editarEmenta.id), {:class=>"button"} %>
+                        <%= link_to "Gerar nova ementa", "/ementa_perfil/#{@editarEmenta.id}/ee_nova_ementa", {:class=>"button"} %>
+                        <%= link_to "Eliminar todos", "/ementa_perfil/#{@editarEmenta.id}/ee_reset", {:class=>"button"} %>
                         <select class="select-ementa"  name="selectEmentaPrincipal" id="selectEmentaPrincipal">
                             <% if !session["all_ee"].blank? %>
                                 <%= options_for_select({ "2 Pessoas" => "2", "3 Pessoas" => "3", "4 Pessoas" => "4", "5 Pessoas" => "5", "6 Pessoas" => "6", "7 Pessoas" => "7", "8 Pessoas" => "8" }, session["all_ee"].to_s) %>
@@ -153,21 +153,9 @@
                             <% end %>
                         </select>
                     </div>
-                    <div class="col-sm-4 text-right">
-                        <span class="ementa-icon">
-                            <div class="icon-div">
-                                <%= link_to image_tag("view-table.png", :border => 0), "ementa", {:class => 'image-link'} %>
-                                <div class="label-icon">Vista semanal</div>
-                            </div>
-                            <div class="icon-div">
-                                <%= link_to image_tag("view-list.png", :border => 0), "ementa_diaria", {:class => 'image-link'} %>
-                                <div class="label-icon">Vista diária</div>
-                            </div>
-                        </span>
-                    </div>
                 </div>
 
-                <div class="row hidden-xs">
+                <div class="row hidden-xs mb70">
                     <div class="col-md-12 mt60">
                         <div class="ementa-container">
                             <div class="ementa-semana">
@@ -230,7 +218,7 @@
                                             <%= link_to("v", "/ee_add_ementa_refeicao?celula=pa", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
-                                            <%= link_to("N", "ementa_delete_refeicao?celula=pa", { :class => "glyphter delete" }) %>
+                                            <%= link_to("N", "/ee_ementa_delete_refeicao?celula=pa", { :class => "glyphter delete" }) %>
                                         </div>
                                     </div>
                                     <div class="ementa-receita-option">
@@ -372,7 +360,7 @@
                                             <%= link_to("v", "/ee_add_ementa_refeicao?celula=a", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
-                                            <%= link_to("N", "ementa_delete_refeicao?celula=a", { :class => "glyphter delete" }) %>
+                                            <%= link_to("N", "/ee_ementa_delete_refeicao?celula=a", { :class => "glyphter delete" }) %>
                                         </div>
                                     </div>
                                     <div class="ementa-receita-option">
@@ -740,7 +728,7 @@
                                             <%= link_to("v", "/ee_add_ementa_refeicao?celula=j", { :class => "glyphter reload" }) %>
                                         </div>
                                         <div class="icon-div">
-                                            <%= link_to("N", "ementa_delete_refeicao?celula=j", { :class => "glyphter delete" }) %>
+                                            <%= link_to("N", "/ee_ementa_delete_refeicao?celula=j", { :class => "glyphter delete" }) %>
                                         </div>
                                     </div>
                                     <div class="ementa-receita-option">

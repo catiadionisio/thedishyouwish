@@ -1008,7 +1008,7 @@ $( document ).on( 'click', '.bloquear_refeicao', function () {
     } else {
         tipo_pagina = "/ementa_lock/"
     }
-    
+
     if (parent.hasClass('lock')) {
         parent.removeClass('lock');
         $(this).text('Bloquear');
@@ -1139,7 +1139,16 @@ $('#selectEmentaPrincipal2 .options li').click(function () {
     "use strict";
     var pessoas = $(this).val();
 
-    ajax_pessoas("all", pessoas);
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_pessoas/"
+    } else {
+        tipo_pagina = "/ementa_pessoas/"
+    }
+
+    ajax_pessoas("all", pessoas, tipo_pagina);
 });
 
 $( document ).on( 'click', '.receita-pessoas2 .options li', function () {
@@ -1149,7 +1158,16 @@ $( document ).on( 'click', '.receita-pessoas2 .options li', function () {
     console.log(pessoas);
     console.log(celula);
 
-    ajax_pessoas(celula, pessoas);
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_pessoas/"
+    } else {
+        tipo_pagina = "/ementa_pessoas/"
+    }
+
+    ajax_pessoas(celula, pessoas, tipo_pagina);
 });
 
 $( document ).on( 'click', '.refeicao-pessoas2 .options li', function () {
@@ -1159,12 +1177,21 @@ $( document ).on( 'click', '.refeicao-pessoas2 .options li', function () {
     console.log(pessoas);
     console.log(celula);
 
-    ajax_pessoas(celula, pessoas);
+    var tipo_pagina;
+    var tipo_pagina_t = $(this).closest('#tipoementa').hasClass('editar_ementa_perfil');
+
+    if (tipo_pagina_t == true) {
+        tipo_pagina = "/ee_ementa_pessoas/"
+    } else {
+        tipo_pagina = "/ementa_pessoas/"
+    }
+
+    ajax_pessoas(celula, pessoas, tipo_pagina);
 });
 
-function ajax_pessoas(celula, pessoas) {
+function ajax_pessoas(celula, pessoas, tipo_pagina) {
     $.ajax({
-        url: "/ementa_pessoas/",
+        url: tipo_pagina,
         data: "celula="+celula+"&pessoas="+pessoas,
         contentType: 'application/json; charset=utf-8',
         success: function (data) {
